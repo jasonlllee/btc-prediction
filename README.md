@@ -4,21 +4,32 @@
 
 ## 文件结构
 
-- `dashboard.html` — 仪表盘主页(打开即可)
+- `index.html` — 仪表盘主页
 - `data.json` — 每日更新的数据(只改这个,页面自动刷新)
 - `CLAUDE.md` — 框架说明(5 个信号定义、DCA 规则、杠杆条件)
+- `.github/workflows/pages.yml` — GitHub Pages 自动部署
 
-## 如何打开
+## 在线访问(GitHub Pages)
+
+部署 URL(启用后):
+**https://jasonlllee.github.io/btc-prediction/**
+
+### 首次启用步骤(只需一次):
+1. 打开 <https://github.com/jasonlllee/btc-prediction/settings/pages>
+2. **Source** 选择 **GitHub Actions**
+3. 保存 —— workflow 会自动跑,1-2 分钟后即可访问
+
+之后每次 push 到 main 或 claude/* 分支,页面会自动重新部署。
+
+## 本地打开
 
 由于浏览器限制 `file://` 下的 `fetch`,需用本地 server:
 
 ```bash
 cd ~/btc-prediction
 python3 -m http.server 8000
-# 浏览器打开 http://localhost:8000/dashboard.html
+# 浏览器打开 http://localhost:8000/
 ```
-
-或者直接让 Claude 帮你跑 server。
 
 ## 每日更新流程
 
