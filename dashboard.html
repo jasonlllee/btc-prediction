@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BTC Cycle Bottom Signal Tracker</title>
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --bg-card: #131827;
+    --bg-card-hover: #1a2033;
+    --border: #252b3d;
+    --text: #e4e7ef;
+    --text-dim: #8a93a8;
+    --text-muted: #5a6378;
+    --accent: #f7931a;
+    --green: #22c55e;
+    --green-bg: rgba(34, 197, 94, 0.12);
+    --amber: #f59e0b;
+    --amber-bg: rgba(245, 158, 11, 0.12);
+    --red: #ef4444;
+    --red-bg: rgba(239, 68, 68, 0.12);
+    --gray: #6b7280;
+    --gray-bg: rgba(107, 114, 128, 0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    padding: 24px;
+    min-height: 100vh;
+  }
+
+  .mono { font-family: "SF Mono", Menlo, Consolas, monospace; }
+
+  .container { max-width: 1400px; margin: 0 auto; }
+
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--border);
+  }
+  .header-title h1 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: var(--text);
+  }
+  .header-title h1 .accent { color: var(--accent); }
+  .header-title .subtitle {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+  .updated-badge {
+    font-size: 12px;
+    color: var(--text-dim);
+    background: var(--bg-card);
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+  }
+
+  /* Stats grid */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+  }
+  .stat-label {
+    font-size: 11px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+  .stat-value {
+    font-size: 22px;
+    font-weight: 700;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    color: var(--text);
+  }
+  .stat-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+  .stat-value.accent { color: var(--accent); }
+  .stat-value.red { color: var(--red); }
+
+  /* Verdict banner */
+  .verdict {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+  }
+  .verdict.continue-dca { border-color: var(--amber); background: linear-gradient(90deg, var(--amber-bg), var(--bg-card)); }
+  .verdict.prepare { border-color: var(--accent); background: linear-gradient(90deg, rgba(247, 147, 26, 0.15), var(--bg-card)); }
+  .verdict.execute { border-color: var(--green); background: linear-gradient(90deg, var(--green-bg), var(--bg-card)); }
+
+  .verdict-left h2 {
+    font-size: 14px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+  .verdict-action {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+  .verdict.continue-dca .verdict-action { color: var(--amber); }
+  .verdict.prepare .verdict-action { color: var(--accent); }
+  .verdict.execute .verdict-action { color: var(--green); }
+
+  .verdict-right {
+    text-align: right;
+  }
+  .verdict-count {
+    font-size: 36px;
+    font-weight: 800;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    line-height: 1;
+  }
+  .verdict-count .total { color: var(--text-muted); font-size: 24px; }
+  .verdict-count-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+
+  /* Signal cards */
+  .section-title {
+    font-size: 14px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 12px;
+    font-weight: 600;
+  }
+  .signals-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .signal-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .signal-card:hover {
+    background: var(--bg-card-hover);
+  }
+  .signal-card.triggered { border-left: 4px solid var(--green); }
+  .signal-card.partial { border-left: 4px solid var(--amber); }
+  .signal-card.pending { border-left: 4px solid var(--gray); }
+
+  .signal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+    gap: 12px;
+  }
+  .signal-number {
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 2px;
+  }
+  .signal-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.3;
+  }
+  .signal-title-cn {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
+  .signal-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .signal-badge.triggered { background: var(--green-bg); color: var(--green); border: 1px solid var(--green); }
+  .signal-badge.partial { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber); }
+  .signal-badge.pending { background: var(--gray-bg); color: var(--gray); border: 1px solid var(--gray); }
+
+  .signal-weight {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+  }
+
+  .signal-field {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--border);
+  }
+  .signal-field:first-of-type {
+    border-top: none;
+    padding-top: 0;
+    margin-top: 0;
+  }
+  .field-label {
+    font-size: 10px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .field-label-icon {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+  .field-label-icon.current { background: var(--text-dim); }
+  .field-label-icon.trigger { background: var(--green); }
+  .field-label-icon.gap { background: var(--amber); }
+  .field-label-icon.level { background: var(--accent); }
+
+  .field-value {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .field-value.gap { color: #fcd34d; }
+  .field-value.level { font-family: "SF Mono", Menlo, Consolas, monospace; color: var(--accent); font-size: 12px; }
+  .historical {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-style: italic;
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--border);
+  }
+
+  /* Bottom sections */
+  .bottom-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .bottom-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .bottom-card h3 {
+    font-size: 14px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 16px;
+    font-weight: 600;
+  }
+
+  /* DCA */
+  .dca-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .dca-stat-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+  }
+  .dca-stat-num {
+    font-size: 24px;
+    font-weight: 800;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    color: var(--accent);
+  }
+  .dca-stat-label {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
+  .progress-bar {
+    height: 10px;
+    background: var(--border);
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 6px;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), #fbbf24);
+    transition: width 0.3s;
+  }
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+  .this-week {
+    margin-top: 14px;
+    padding: 10px 12px;
+    background: var(--bg);
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+
+  /* Leverage gauge */
+  .gauge-container { text-align: center; }
+  .gauge-num {
+    font-size: 44px;
+    font-weight: 800;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    line-height: 1;
+  }
+  .gauge-num .total { color: var(--text-muted); font-size: 28px; }
+  .gauge-label {
+    font-size: 11px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 4px;
+    margin-bottom: 14px;
+  }
+  .gauge-dots {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    margin-bottom: 14px;
+  }
+  .gauge-dot {
+    width: 24px;
+    height: 10px;
+    border-radius: 3px;
+    background: var(--border);
+  }
+  .gauge-dot.active { background: var(--green); }
+  .gauge-dot.partial { background: var(--amber); }
+  .leverage-params {
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.7;
+    text-align: left;
+  }
+  .leverage-params .k { color: var(--text-dim); }
+  .leverage-params .v { color: var(--text); font-family: "SF Mono", Menlo, Consolas, monospace; }
+
+  /* Events */
+  .event-item {
+    padding: 10px 0;
+    border-bottom: 1px dashed var(--border);
+  }
+  .event-item:last-child { border-bottom: none; }
+  .event-date {
+    font-size: 11px;
+    color: var(--accent);
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    margin-bottom: 2px;
+  }
+  .event-name {
+    font-size: 13px;
+    color: var(--text);
+    font-weight: 600;
+  }
+  .event-impact {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 3px;
+    line-height: 1.4;
+  }
+
+  /* Legend */
+  .legend {
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .bottom-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 640px) {
+    body { padding: 12px; }
+    .stats-grid { grid-template-columns: 1fr; }
+    .signals-grid { grid-template-columns: 1fr; }
+    .header { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .verdict { flex-direction: column; align-items: flex-start; gap: 14px; }
+    .verdict-right { text-align: left; }
+  }
+
+  /* Print */
+  @media print {
+    body { background: white; color: black; padding: 10mm; }
+    .signal-card, .stat-card, .bottom-card, .verdict, .updated-badge {
+      background: white !important;
+      border: 1px solid #ccc !important;
+      break-inside: avoid;
+    }
+    .signals-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-title">
+      <h1><span class="accent">₿</span>TC Cycle Bottom Signal Tracker</h1>
+      <div class="subtitle">5-signal framework · Daily status monitor · <span id="cycle-pos"></span></div>
+    </div>
+    <div class="updated-badge">Updated <span id="updated"></span></div>
+  </div>
+
+  <!-- Top stats -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">BTC Price</div>
+      <div class="stat-value accent mono" id="btc-price"></div>
+      <div class="stat-sub" id="btc-price-sub"></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">ATH Drawdown</div>
+      <div class="stat-value red mono" id="drawdown"></div>
+      <div class="stat-sub" id="ath-sub"></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Days from Top</div>
+      <div class="stat-value mono" id="days-from-top"></div>
+      <div class="stat-sub">Top on <span id="ath-date"></span></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Cycle Progress</div>
+      <div class="stat-value mono" id="cycle-progress"></div>
+      <div class="stat-sub" id="cycle-progress-sub"></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Expected Bottom</div>
+      <div class="stat-value mono" style="font-size: 16px;" id="bottom-window"></div>
+      <div class="stat-sub" id="bottom-price"></div>
+    </div>
+  </div>
+
+  <!-- Verdict banner -->
+  <div class="verdict" id="verdict-banner">
+    <div class="verdict-left">
+      <h2>Current Verdict</h2>
+      <div class="verdict-action" id="verdict-action"></div>
+      <div style="font-size: 12px; color: var(--text-dim); margin-top: 6px;" id="verdict-detail"></div>
+    </div>
+    <div class="verdict-right">
+      <div class="verdict-count"><span id="triggered-count">0</span><span class="total">/5</span></div>
+      <div class="verdict-count-label">Signals Triggered</div>
+    </div>
+  </div>
+
+  <!-- Signal cards -->
+  <div class="section-title">5 Bottom-Reversal Signals</div>
+  <div class="signals-grid" id="signals"></div>
+
+  <!-- Bottom grid: DCA + Leverage + Events -->
+  <div class="bottom-grid">
+    <div class="bottom-card">
+      <h3>DCA Progress</h3>
+      <div class="dca-stats">
+        <div class="dca-stat-box">
+          <div class="dca-stat-num"><span id="dca-week"></span>/<span id="dca-total"></span></div>
+          <div class="dca-stat-label">Current Week</div>
+        </div>
+        <div class="dca-stat-box">
+          <div class="dca-stat-num"><span id="dca-pct"></span>%</div>
+          <div class="dca-stat-label">Deployed of 30%</div>
+        </div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="dca-fill" style="width: 0%;"></div></div>
+      <div class="progress-meta">
+        <span id="dca-deployed"></span>
+        <span id="dca-remaining"></span>
+      </div>
+      <div class="this-week" id="this-week"></div>
+    </div>
+
+    <div class="bottom-card">
+      <h3>Leverage Readiness</h3>
+      <div class="gauge-container">
+        <div class="gauge-num"><span id="lev-count">0</span><span class="total">/<span id="lev-req">4</span></span></div>
+        <div class="gauge-label">Signals Required to Execute</div>
+        <div class="gauge-dots" id="gauge-dots"></div>
+      </div>
+      <div class="leverage-params" id="leverage-params"></div>
+    </div>
+
+    <div class="bottom-card">
+      <h3>Key Events Ahead</h3>
+      <div id="events"></div>
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <div class="legend-item"><span class="signal-badge triggered">✓ Triggered</span> 已触发</div>
+    <div class="legend-item"><span class="signal-badge partial">◐ Partial</span> 部分触发 / 接近</div>
+    <div class="legend-item"><span class="signal-badge pending">○ Pending</span> 未触发</div>
+    <div class="legend-item" style="margin-left: auto;">Framework: 5 signals × weighted · Leverage gate: 4/5 triggered</div>
+  </div>
+</div>
+
+<script>
+const fmt = {
+  usd: n => '$' + n.toLocaleString('en-US'),
+  usdK: n => '$' + Math.round(n/1000) + 'K',
+  pct: n => (n >= 0 ? '+' : '') + n.toFixed(1) + '%',
+};
+
+const STATUS_MAP = {
+  triggered: { icon: '✓', label: 'Triggered' },
+  partial:   { icon: '◐', label: 'Partial'   },
+  pending:   { icon: '○', label: 'Pending'   },
+};
+
+async function load() {
+  const res = await fetch('data.json?t=' + Date.now());
+  const d = await res.json();
+  render(d);
+}
+
+function render(d) {
+  // Header
+  document.getElementById('updated').textContent = d.updated;
+  document.getElementById('cycle-pos').textContent =
+    `Day ${d.cycle.days_from_top} from top · Expected bottom ${d.cycle.expected_bottom_window}`;
+
+  // Top stats
+  document.getElementById('btc-price').textContent = fmt.usd(d.btc.price);
+  document.getElementById('btc-price-sub').textContent =
+    `Feb 11 low: ${fmt.usd(d.btc.feb11_low)} · Recent pivot: ${fmt.usd(d.btc.recent_pullback_low)}`;
+
+  const dd = (d.btc.price - d.btc.ath) / d.btc.ath * 100;
+  document.getElementById('drawdown').textContent = fmt.pct(dd);
+  document.getElementById('ath-sub').textContent = `ATH ${fmt.usd(d.btc.ath)}`;
+  document.getElementById('ath-date').textContent = d.btc.ath_date;
+
+  document.getElementById('days-from-top').textContent = d.cycle.days_from_top;
+
+  const cyclePct = Math.min(100, Math.round(d.cycle.days_from_top / d.cycle.top_to_bottom_avg_days * 100));
+  document.getElementById('cycle-progress').textContent = cyclePct + '%';
+  document.getElementById('cycle-progress-sub').textContent =
+    `Top → Bottom (avg ${d.cycle.top_to_bottom_avg_days}d)`;
+
+  document.getElementById('bottom-window').textContent = d.cycle.expected_bottom_window;
+  document.getElementById('bottom-price').textContent = d.cycle.expected_bottom_price_range;
+
+  // Verdict
+  const triggered = d.signals.filter(s => s.status === 'triggered').length;
+  const partial = d.signals.filter(s => s.status === 'partial').length;
+  document.getElementById('triggered-count').textContent = triggered;
+
+  const banner = document.getElementById('verdict-banner');
+  const action = document.getElementById('verdict-action');
+  const detail = document.getElementById('verdict-detail');
+  banner.classList.remove('continue-dca', 'prepare', 'execute');
+
+  if (triggered >= 4) {
+    banner.classList.add('execute');
+    action.textContent = 'EXECUTE LEVERAGE';
+    detail.textContent = `4/5 触发 —— 按计划开启 ${d.leverage.target_leverage} 杠杆,借入 ${d.leverage.target_borrow_usd}`;
+  } else if (triggered >= 2 || (triggered + partial) >= 4) {
+    banner.classList.add('prepare');
+    action.textContent = 'PREPARE LEVERAGE';
+    detail.textContent = `${triggered} 触发 + ${partial} 接近 —— 准备 OKX 开仓流程,监控剩余信号`;
+  } else {
+    banner.classList.add('continue-dca');
+    action.textContent = 'CONTINUE DCA';
+    detail.textContent = `${triggered} 触发 / ${partial} 接近 / ${5 - triggered - partial} 未触发 —— 继续定投,等更多信号确认`;
+  }
+
+  // Signal cards
+  const sContainer = document.getElementById('signals');
+  sContainer.innerHTML = d.signals.map(s => `
+    <div class="signal-card ${s.status}">
+      <div class="signal-header">
+        <div>
+          <div class="signal-number">SIGNAL ${s.id} · Weight ${s.weight}%</div>
+          <div class="signal-title">${s.name}</div>
+          <div class="signal-title-cn">${s.name_cn}</div>
+        </div>
+        <span class="signal-badge ${s.status}">${STATUS_MAP[s.status].icon} ${STATUS_MAP[s.status].label}</span>
+      </div>
+      <div class="signal-field">
+        <div class="field-label"><span class="field-label-icon current"></span>当前状态 · Current</div>
+        <div class="field-value">${s.current}</div>
+      </div>
+      <div class="signal-field">
+        <div class="field-label"><span class="field-label-icon trigger"></span>触发条件 · Trigger</div>
+        <div class="field-value">${s.trigger}</div>
+      </div>
+      <div class="signal-field">
+        <div class="field-label"><span class="field-label-icon gap"></span>距离触发还差什么 · Gap to Trigger</div>
+        <div class="field-value gap">${s.gap}</div>
+      </div>
+      <div class="signal-field">
+        <div class="field-label"><span class="field-label-icon level"></span>关键位 · Key Level</div>
+        <div class="field-value level">${s.key_level}</div>
+      </div>
+      <div class="historical">📜 ${s.historical}</div>
+    </div>
+  `).join('');
+
+  // DCA
+  document.getElementById('dca-week').textContent = d.dca.week;
+  document.getElementById('dca-total').textContent = d.dca.total_weeks;
+  document.getElementById('dca-pct').textContent = d.dca.deployed_pct;
+  document.getElementById('dca-fill').style.width = d.dca.deployed_pct + '%';
+  document.getElementById('dca-deployed').textContent = `Deployed ${fmt.usd(d.dca.deployed_usd)}`;
+  const remainingWeeks = d.dca.total_weeks - d.dca.week + 1;
+  document.getElementById('dca-remaining').textContent = `${remainingWeeks} weeks remaining`;
+
+  const tw = document.getElementById('this-week');
+  if (d.dca.this_week_buy_usd) {
+    tw.innerHTML = `<strong style="color: var(--green);">本周已买:</strong> ${fmt.usd(d.dca.this_week_buy_usd)} @ ${fmt.usd(d.dca.this_week_buy_price)}`;
+  } else {
+    tw.innerHTML = `<strong style="color: var(--amber);">本周待买:</strong> ~${fmt.usd(d.dca.weekly_amount_base)} (${d.dca.weekly_pct_base}% of remaining) · 加速规则:${d.dca.acceleration_rules}`;
+  }
+
+  // Leverage
+  document.getElementById('lev-count').textContent = triggered;
+  document.getElementById('lev-req').textContent = d.leverage.signals_required;
+  const gaugeDots = document.getElementById('gauge-dots');
+  gaugeDots.innerHTML = '';
+  for (let i = 0; i < 5; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'gauge-dot';
+    if (i < triggered) dot.classList.add('active');
+    else if (i < triggered + partial) dot.classList.add('partial');
+    gaugeDots.appendChild(dot);
+  }
+
+  document.getElementById('leverage-params').innerHTML = `
+    <div><span class="k">目标杠杆:</span> <span class="v">${d.leverage.target_leverage}</span></div>
+    <div><span class="k">借入规模:</span> <span class="v">${d.leverage.target_borrow_usd}</span></div>
+    <div><span class="k">利率上限:</span> <span class="v">${d.leverage.max_borrow_rate}</span></div>
+    <div><span class="k">爆仓缓冲:</span> <span class="v">${d.leverage.liquidation_buffer}</span></div>
+    <div><span class="k">持有周期:</span> <span class="v">2–3 years, full cycle</span></div>
+  `;
+
+  // Events
+  document.getElementById('events').innerHTML = d.events_next_week.map(e => `
+    <div class="event-item">
+      <div class="event-date">${e.date}</div>
+      <div class="event-name">${e.name}</div>
+      <div class="event-impact">${e.impact}</div>
+    </div>
+  `).join('');
+}
+
+load().catch(err => {
+  document.body.innerHTML = `<div style="color:#ef4444;padding:40px;">
+    <h2>Failed to load data.json</h2>
+    <p>${err.message}</p>
+    <p style="color:#8a93a8;margin-top:12px;font-size:13px;">
+      若是通过 file:// 打开,浏览器可能限制 fetch 本地文件。请用本地 server:<br>
+      <code style="background:#131827;padding:4px 8px;border-radius:4px;display:inline-block;margin-top:6px;">python3 -m http.server 8000</code>
+      然后访问 <code>http://localhost:8000/dashboard.html</code>
+    </p>
+  </div>`;
+});
+</script>
+</body>
+</html>
