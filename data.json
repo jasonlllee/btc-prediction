@@ -9,70 +9,83 @@
   },
   "cycle": {
     "days_from_top": 193,
-    "expected_bottom_window": "2026 Q3-Q4 (Aug–Nov)",
+    "expected_bottom_window": { "cn": "2026 Q3-Q4(8–11 月)", "en": "2026 Q3–Q4 (Aug–Nov)" },
     "expected_bottom_price_range": "$44,000 – $63,000",
     "top_to_bottom_avg_days": 370
   },
   "signals": [
     {
-      "id": 1,
-      "name": "Higher Low",
-      "name_cn": "周线高点抬高",
-      "weight": 25,
-      "status": "partial",
-      "current": "Feb 11 低点 $60,074 → 反弹至 $76K → 4 月初回踩 $66K → 反弹至 $75K",
-      "trigger": "再次回踩时周收盘 > $60,074,形成 A<B 结构",
-      "gap": "需要一次新的回踩测试 $60K–$66K 区间不破,并周线反弹确认。当前结构仍在构筑中。",
-      "key_level": "$60,074 (2月低点) / $66,000 (近期枢轴)",
-      "historical": "2019 ($3,122→$3,400) 和 2023 ($15,476→$16,500) 都应验;2018 年 $6K 假信号后破位"
+      "id": 1, "weight": 25, "status": "partial",
+      "name": { "cn": "周线高点抬高", "en": "Higher Low (Weekly)" },
+      "sub":  { "cn": "Higher Low", "en": "周线高点抬高" },
+      "current":    { "cn": "Feb 11 低点 $60,074 → 反弹至 $76K → 4 月初回踩 $66K → 反弹至 $75K",
+                      "en": "Feb 11 low $60,074 → bounce to $76K → early-April pullback to $66K → rebound to $75K" },
+      "trigger":    { "cn": "再次回踩时周收盘 > $60,074,形成 A<B 结构",
+                      "en": "On next pullback, weekly close > $60,074, forming A<B higher-low structure" },
+      "gap":        { "cn": "需要一次新的回踩测试 $60K–$66K 区间不破,并周线反弹确认。当前结构仍在构筑中。",
+                      "en": "Need a fresh pullback to $60K–$66K that holds, with a weekly bounce confirm. Structure still forming." },
+      "key_level":  { "cn": "$60,074(2月低点)/ $66,000(近期枢轴)",
+                      "en": "$60,074 (Feb low) / $66,000 (recent pivot)" },
+      "historical": { "cn": "2019($3,122→$3,400)和 2023($15,476→$16,500)都应验;2018 年 $6K 假信号后破位",
+                      "en": "Confirmed 2019 ($3,122→$3,400) and 2023 ($15,476→$16,500); false signal 2018 at $6K broke down" }
     },
     {
-      "id": 2,
-      "name": "Weekly MACD Bullish Cross (Below Zero)",
-      "name_cn": "周线 MACD 零轴下方金叉",
-      "weight": 20,
-      "status": "partial",
-      "current": "周线 MACD 接近 2025 年 5 月以来首次金叉,DIF/DEA 均在零轴下方 —— 符合底部信号特征",
-      "trigger": "周收盘确认 DIF 上穿 DEA,且两条线都位于或接近零轴下方,histogram 转正",
-      "gap": "本周五收盘需确认金叉。若零轴上方金叉不算(2018/8 和 2022/3 都是假信号)。",
-      "key_level": "DIF 与 DEA 均需 < 0",
-      "historical": "2019/2 和 2023/1 都在零轴下方金叉后确认底部"
+      "id": 2, "weight": 20, "status": "partial",
+      "name": { "cn": "周线 MACD 零轴下方金叉", "en": "Weekly MACD Cross (Below Zero)" },
+      "sub":  { "cn": "Weekly MACD Bullish Cross", "en": "周线 MACD 金叉" },
+      "current":    { "cn": "周线 MACD 接近 2025 年 5 月以来首次金叉,DIF/DEA 均在零轴下方 —— 符合底部信号特征",
+                      "en": "Weekly MACD near first bullish cross since May 2025; DIF/DEA both below zero — classic bottom setup" },
+      "trigger":    { "cn": "周收盘确认 DIF 上穿 DEA,且两条线都位于或接近零轴下方,histogram 转正",
+                      "en": "Weekly close confirms DIF crossing above DEA, both lines at/below zero, histogram flips green" },
+      "gap":        { "cn": "本周五收盘需确认金叉。零轴上方金叉不算(2018/8 和 2022/3 都是假信号)。",
+                      "en": "Friday weekly close must confirm. Above-zero crosses don't count (2018/8 and 2022/3 were false)." },
+      "key_level":  { "cn": "DIF 与 DEA 均需 < 0", "en": "DIF and DEA must both be < 0" },
+      "historical": { "cn": "2019/2 和 2023/1 都在零轴下方金叉后确认底部",
+                      "en": "Both 2019/2 and 2023/1 confirmed bottoms via below-zero crosses" }
     },
     {
-      "id": 3,
-      "name": "LTH Net Position Change Turns Positive",
-      "name_cn": "长期持有者转为净买入",
-      "weight": 20,
-      "status": "pending",
-      "current": "Glassnode 显示 LTH 仍在分发区间;LTH 供应占比约 80%,距 85% 历史底部阈值仍差 ~5 个百分点",
-      "trigger": "LTH Net Position Change 连续 2 周为正值(净买入)",
-      "gap": "至少需要 2-3 个月时间,LTH 通常在价格底部之后 1 个月才转正。耐心等待滞后确认。",
-      "key_level": "LTH Supply % ≥ 85%,Net Position Change > 0",
-      "historical": "2019/1 和 2022/12 均在底部之后 1 个月转正,滞后但可靠"
+      "id": 3, "weight": 20, "status": "pending",
+      "name": { "cn": "长期持有者转为净买入", "en": "LTH Net Position Turns Positive" },
+      "sub":  { "cn": "LTH Net Accumulation", "en": "长期持有者累积" },
+      "current":    { "cn": "Glassnode 显示 LTH 仍在分发区间;LTH 供应占比约 80%,距 85% 历史底部阈值仍差 ~5 个百分点",
+                      "en": "Glassnode shows LTH still in distribution; LTH supply ~80%, ~5pp below the 85% historical bottom threshold" },
+      "trigger":    { "cn": "LTH Net Position Change 连续 2 周为正值(净买入)",
+                      "en": "LTH Net Position Change positive for 2 consecutive weeks (net buying)" },
+      "gap":        { "cn": "至少需要 2–3 个月时间。LTH 通常在价格底部之后 1 个月才转正,耐心等待滞后确认。",
+                      "en": "Needs 2–3 months. LTH typically flips positive ~1 month AFTER price bottom — lagging confirm." },
+      "key_level":  { "cn": "LTH Supply % ≥ 85%,Net Position Change > 0",
+                      "en": "LTH Supply % ≥ 85%, Net Position Change > 0" },
+      "historical": { "cn": "2019/1 和 2022/12 均在底部之后 1 个月转正,滞后但可靠",
+                      "en": "Flipped positive 1 month after bottom in both 2019/1 and 2022/12 — lagging but reliable" }
     },
     {
-      "id": 4,
-      "name": "US Spot BTC ETF 2-Week Net Inflows",
-      "name_cn": "美国现货 BTC ETF 连续 2 周净流入",
-      "weight": 15,
-      "status": "partial",
-      "current": "本周 $1.1B 净流入(4 个月高点,IBIT $871M、FBTC $98M、MSBT $14.9M);但上周刚出现 5 日连续 $1.72B 净流出",
-      "trigger": "连续 2 周 (10+ 交易日) 净流入,且多数交易日为正",
-      "gap": "下周需要继续保持净流入,凑齐 2 连阳。单周反弹不算。",
-      "key_level": "周度净流入连续 2 周 > 0",
-      "historical": "ETF 2024/1 上线后,持续流入曾推动 BTC 从 $42K → $73K"
+      "id": 4, "weight": 15, "status": "partial",
+      "name": { "cn": "美国现货 BTC ETF 连续 2 周净流入", "en": "US Spot BTC ETF 2-Week Net Inflows" },
+      "sub":  { "cn": "ETF Flows", "en": "ETF 资金流" },
+      "current":    { "cn": "本周 $1.1B 净流入(4 个月高点,IBIT $871M、FBTC $98M、MSBT $14.9M);但上周刚出现 5 日连续 $1.72B 净流出",
+                      "en": "This week $1.1B net inflow (4-month high; IBIT $871M, FBTC $98M, MSBT $14.9M); prior week had 5-day $1.72B outflow streak" },
+      "trigger":    { "cn": "连续 2 周(10+ 交易日)净流入,且多数交易日为正",
+                      "en": "2 consecutive weeks (10+ trading days) of net inflows, majority of days positive" },
+      "gap":        { "cn": "下周需要继续保持净流入,凑齐 2 连阳。单周反弹不算。",
+                      "en": "Next week must continue positive to stack 2 straight. Single-week bounce doesn't qualify." },
+      "key_level":  { "cn": "周度净流入连续 2 周 > 0", "en": "Weekly net flow > 0 for 2 consecutive weeks" },
+      "historical": { "cn": "ETF 2024/1 上线后,持续流入曾推动 BTC 从 $42K → $73K",
+                      "en": "Post-2024/1 launch, sustained inflows drove BTC from $42K → $73K" }
     },
     {
-      "id": 5,
-      "name": "Macro Liquidity Inflection",
-      "name_cn": "宏观流动性拐点",
-      "weight": 20,
-      "status": "partial",
-      "current": "Fed funds 3.50–3.75%(1 月以来按兵不动);点阵图中位数 2026 年仅 1 次降息;10Y 约 4.24%;霍尔木兹局势推高油价",
-      "trigger": "满足任一:(a) Fed 暂停/降息,(b) 10Y 连续 2 个月下行,(c) 全球 M2 增速筑底回升",
-      "gap": "短期 Fed 不会降息。需等 10Y 跌破 4.0% 并持续,或 4/29 FOMC 释放鸽派信号,或油价回落缓解通胀压力。",
-      "key_level": "Fed funds < 3.50% / 10Y < 4.00% / M2 YoY 转正",
-      "historical": "2019/1 Fed 暂停 → BTC 同月见底;2022/10 10Y 见顶 → BTC 一个月后见底"
+      "id": 5, "weight": 20, "status": "partial",
+      "name": { "cn": "宏观流动性拐点", "en": "Macro Liquidity Inflection" },
+      "sub":  { "cn": "Fed / 10Y / M2", "en": "美联储 / 10Y / M2" },
+      "current":    { "cn": "Fed funds 3.50–3.75%(1 月以来按兵不动);点阵图中位数 2026 年仅 1 次降息;10Y 约 4.24%;霍尔木兹局势推高油价",
+                      "en": "Fed funds 3.50–3.75% (hold since Jan); dot plot median 1 cut in 2026; 10Y ~4.24%; Strait of Hormuz pushing oil up" },
+      "trigger":    { "cn": "满足任一:(a) Fed 暂停/降息,(b) 10Y 连续 2 个月下行,(c) 全球 M2 增速筑底回升",
+                      "en": "Any of: (a) Fed pause/cut, (b) 10Y trending down for 2+ months, (c) global M2 growth bottoms and rises" },
+      "gap":        { "cn": "短期 Fed 不会降息。需等 10Y 跌破 4.0% 并持续,或 4/29 FOMC 释放鸽派信号,或油价回落缓解通胀压力。",
+                      "en": "Fed won't cut near-term. Need 10Y to break below 4.00% and stay, or dovish 4/29 FOMC, or oil pullback easing inflation." },
+      "key_level":  { "cn": "Fed funds < 3.50% / 10Y < 4.00% / M2 YoY 转正",
+                      "en": "Fed funds < 3.50% / 10Y < 4.00% / M2 YoY turns positive" },
+      "historical": { "cn": "2019/1 Fed 暂停 → BTC 同月见底;2022/10 10Y 见顶 → BTC 一个月后见底",
+                      "en": "2019/1 Fed pause → BTC bottomed same month; 2022/10 10Y peaked → BTC bottomed 1 month later" }
     }
   ],
   "dca": {
@@ -87,7 +100,10 @@
     "deployed_pct": 0,
     "this_week_buy_usd": null,
     "this_week_buy_price": null,
-    "acceleration_rules": "若 BTC 周跌 >10%,买 3%;>20%,买 5%"
+    "acceleration_rules": {
+      "cn": "若 BTC 周跌 >10%,买 3%;>20%,买 5%",
+      "en": "If BTC drops >10% weekly, buy 3%; >20%, buy 5%"
+    }
   },
   "leverage": {
     "signals_triggered": 0,
@@ -100,23 +116,27 @@
   "events_next_week": [
     {
       "date": "2026-04-28 ~ 04-29",
-      "name": "FOMC Meeting + Powell Press Conference",
-      "impact": "影响 Signal 5 —— 鸽派基调利好,鹰派将推后降息预期"
+      "name":   { "cn": "FOMC 会议 + 鲍威尔发布会", "en": "FOMC Meeting + Powell Press Conference" },
+      "impact": { "cn": "影响 Signal 5 —— 鸽派基调利好,鹰派将推后降息预期",
+                  "en": "Affects Signal 5 — dovish tone bullish; hawkish pushes back cut expectations" }
     },
     {
       "date": "2026-04-30",
-      "name": "US March PCE Inflation",
-      "impact": "影响 Signal 5 —— 核心 PCE 粘滞则 Fed 降息预期后延"
+      "name":   { "cn": "美国 3 月核心 PCE", "en": "US March Core PCE" },
+      "impact": { "cn": "影响 Signal 5 —— 核心 PCE 粘滞则 Fed 降息预期后延",
+                  "en": "Affects Signal 5 — sticky core PCE delays cut expectations" }
     },
     {
       "date": "Ongoing",
-      "name": "Middle East / Strait of Hormuz",
-      "impact": "油价破 $95 将压制风险资产,复杂化 Fed 路径"
+      "name":   { "cn": "中东 / 霍尔木兹海峡", "en": "Middle East / Strait of Hormuz" },
+      "impact": { "cn": "油价破 $95 将压制风险资产,复杂化 Fed 路径",
+                  "en": "Oil above $95 pressures risk assets, complicates Fed path" }
     },
     {
       "date": "Weekly",
-      "name": "US Spot BTC ETF Daily Flows",
-      "impact": "Signal 4 需下周继续净流入凑齐 2 连阳"
+      "name":   { "cn": "美国现货 BTC ETF 日度资金流", "en": "US Spot BTC ETF Daily Flows" },
+      "impact": { "cn": "Signal 4 需下周继续净流入凑齐 2 连阳",
+                  "en": "Signal 4 needs next week's inflows to stack 2 consecutive weeks" }
     }
   ]
 }

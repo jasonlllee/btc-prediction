@@ -452,6 +452,110 @@
     }
     .signals-grid { grid-template-columns: repeat(2, 1fr); }
   }
+  /* Language toggle */
+  .lang-toggle {
+    display: inline-flex;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 3px;
+    gap: 2px;
+  }
+  .lang-btn {
+    padding: 5px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    border: none;
+    background: transparent;
+    color: var(--text-dim);
+    cursor: pointer;
+    border-radius: 4px;
+    font-family: inherit;
+    transition: background 0.15s, color 0.15s;
+  }
+  .lang-btn:hover { color: var(--text); }
+  .lang-btn.active {
+    background: var(--accent);
+    color: #0a0e1a;
+  }
+  .header-right { display: flex; gap: 10px; align-items: center; }
+
+  /* Theory section */
+  .theory {
+    background: linear-gradient(135deg, rgba(247, 147, 26, 0.06), var(--bg-card));
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+  .theory-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+  }
+  .theory-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.5px;
+  }
+  .theory-toggle {
+    font-size: 12px;
+    color: var(--text-dim);
+    transition: transform 0.2s;
+  }
+  .theory.collapsed .theory-body { display: none; }
+  .theory.collapsed .theory-toggle { transform: rotate(-90deg); }
+  .theory-body { margin-top: 16px; }
+  .theory-block { margin-bottom: 18px; }
+  .theory-block:last-child { margin-bottom: 0; }
+  .theory-block h4 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px dashed var(--border);
+  }
+  .theory-block p {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.7;
+    margin-bottom: 8px;
+  }
+  .theory-block p:last-child { margin-bottom: 0; }
+  .theory-block ul {
+    list-style: none;
+    padding: 0;
+    margin: 6px 0;
+  }
+  .theory-block li {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.7;
+    padding-left: 16px;
+    position: relative;
+  }
+  .theory-block li::before {
+    content: "▸";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+  }
+  .theory-block strong { color: var(--text); font-weight: 600; }
+  .theory-block code {
+    background: var(--bg);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 12px;
+    color: var(--accent);
+  }
+
 </style>
 </head>
 <body>
@@ -462,33 +566,48 @@
       <h1><span class="accent">₿</span>TC Cycle Bottom Signal Tracker</h1>
       <div class="subtitle">5-signal framework · Daily status monitor · <span id="cycle-pos"></span></div>
     </div>
-    <div class="updated-badge">Updated <span id="updated"></span></div>
+    <div class="header-right">
+      <div class="lang-toggle" role="tablist">
+        <button class="lang-btn" data-lang="cn" id="lang-cn">中文</button>
+        <button class="lang-btn" data-lang="en" id="lang-en">EN</button>
+      </div>
+      <div class="updated-badge"><span id="updated-label">Updated</span> <span id="updated"></span></div>
+    </div>
+  </div>
+
+  <!-- Theory / About section -->
+  <div class="theory" id="theory">
+    <div class="theory-header" onclick="document.getElementById('theory').classList.toggle('collapsed')">
+      <div class="theory-title" id="theory-title"></div>
+      <div class="theory-toggle">▼</div>
+    </div>
+    <div class="theory-body" id="theory-body"></div>
   </div>
 
   <!-- Top stats -->
   <div class="stats-grid">
     <div class="stat-card">
-      <div class="stat-label">BTC Price</div>
+      <div class="stat-label" data-i18n="stat_price"></div>
       <div class="stat-value accent mono" id="btc-price"></div>
       <div class="stat-sub" id="btc-price-sub"></div>
     </div>
     <div class="stat-card">
-      <div class="stat-label">ATH Drawdown</div>
+      <div class="stat-label" data-i18n="stat_drawdown"></div>
       <div class="stat-value red mono" id="drawdown"></div>
       <div class="stat-sub" id="ath-sub"></div>
     </div>
     <div class="stat-card">
-      <div class="stat-label">Days from Top</div>
+      <div class="stat-label" data-i18n="stat_days"></div>
       <div class="stat-value mono" id="days-from-top"></div>
-      <div class="stat-sub">Top on <span id="ath-date"></span></div>
+      <div class="stat-sub"><span data-i18n="stat_top_on"></span> <span id="ath-date"></span></div>
     </div>
     <div class="stat-card">
-      <div class="stat-label">Cycle Progress</div>
+      <div class="stat-label" data-i18n="stat_progress"></div>
       <div class="stat-value mono" id="cycle-progress"></div>
       <div class="stat-sub" id="cycle-progress-sub"></div>
     </div>
     <div class="stat-card">
-      <div class="stat-label">Expected Bottom</div>
+      <div class="stat-label" data-i18n="stat_bottom"></div>
       <div class="stat-value mono" style="font-size: 16px;" id="bottom-window"></div>
       <div class="stat-sub" id="bottom-price"></div>
     </div>
@@ -497,32 +616,32 @@
   <!-- Verdict banner -->
   <div class="verdict" id="verdict-banner">
     <div class="verdict-left">
-      <h2>Current Verdict</h2>
+      <h2 data-i18n="verdict_title"></h2>
       <div class="verdict-action" id="verdict-action"></div>
       <div style="font-size: 12px; color: var(--text-dim); margin-top: 6px;" id="verdict-detail"></div>
     </div>
     <div class="verdict-right">
       <div class="verdict-count"><span id="triggered-count">0</span><span class="total">/5</span></div>
-      <div class="verdict-count-label">Signals Triggered</div>
+      <div class="verdict-count-label" data-i18n="verdict_count_label"></div>
     </div>
   </div>
 
   <!-- Signal cards -->
-  <div class="section-title">5 Bottom-Reversal Signals</div>
+  <div class="section-title" data-i18n="signals_title"></div>
   <div class="signals-grid" id="signals"></div>
 
   <!-- Bottom grid: DCA + Leverage + Events -->
   <div class="bottom-grid">
     <div class="bottom-card">
-      <h3>DCA Progress</h3>
+      <h3 data-i18n="dca_title"></h3>
       <div class="dca-stats">
         <div class="dca-stat-box">
           <div class="dca-stat-num"><span id="dca-week"></span>/<span id="dca-total"></span></div>
-          <div class="dca-stat-label">Current Week</div>
+          <div class="dca-stat-label" data-i18n="dca_week_label"></div>
         </div>
         <div class="dca-stat-box">
           <div class="dca-stat-num"><span id="dca-pct"></span>%</div>
-          <div class="dca-stat-label">Deployed of 30%</div>
+          <div class="dca-stat-label" data-i18n="dca_deployed_label"></div>
         </div>
       </div>
       <div class="progress-bar"><div class="progress-fill" id="dca-fill" style="width: 0%;"></div></div>
@@ -534,27 +653,27 @@
     </div>
 
     <div class="bottom-card">
-      <h3>Leverage Readiness</h3>
+      <h3 data-i18n="leverage_title"></h3>
       <div class="gauge-container">
         <div class="gauge-num"><span id="lev-count">0</span><span class="total">/<span id="lev-req">4</span></span></div>
-        <div class="gauge-label">Signals Required to Execute</div>
+        <div class="gauge-label" data-i18n="leverage_req_label"></div>
         <div class="gauge-dots" id="gauge-dots"></div>
       </div>
       <div class="leverage-params" id="leverage-params"></div>
     </div>
 
     <div class="bottom-card">
-      <h3>Key Events Ahead</h3>
+      <h3 data-i18n="events_title"></h3>
       <div id="events"></div>
     </div>
   </div>
 
   <!-- Legend -->
   <div class="legend">
-    <div class="legend-item"><span class="signal-badge triggered">✓ Triggered</span> 已触发</div>
-    <div class="legend-item"><span class="signal-badge partial">◐ Partial</span> 部分触发 / 接近</div>
-    <div class="legend-item"><span class="signal-badge pending">○ Pending</span> 未触发</div>
-    <div class="legend-item" style="margin-left: auto;">Framework: 5 signals × weighted · Leverage gate: 4/5 triggered</div>
+    <div class="legend-item"><span class="signal-badge triggered">✓ <span data-i18n="status_triggered"></span></span> <span data-i18n="legend_triggered"></span></div>
+    <div class="legend-item"><span class="signal-badge partial">◐ <span data-i18n="status_partial"></span></span> <span data-i18n="legend_partial"></span></div>
+    <div class="legend-item"><span class="signal-badge pending">○ <span data-i18n="status_pending"></span></span> <span data-i18n="legend_pending"></span></div>
+    <div class="legend-item" style="margin-left: auto;" data-i18n="legend_framework"></div>
   </div>
 </div>
 
@@ -566,95 +685,379 @@ const fmt = {
 };
 
 const STATUS_MAP = {
-  triggered: { icon: '✓', label: 'Triggered' },
-  partial:   { icon: '◐', label: 'Partial'   },
-  pending:   { icon: '○', label: 'Pending'   },
+  triggered: { icon: '✓' },
+  partial:   { icon: '◐' },
+  pending:   { icon: '○' },
+};
+
+const UI_TEXT = {
+  cn: {
+    subtitle: "5 信号底部框架 · 每日状态监控",
+    updated_label: "更新于",
+    stat_price: "BTC 价格",
+    stat_drawdown: "距 ATH 回撤",
+    stat_days: "距顶部天数",
+    stat_top_on: "顶部日期:",
+    stat_progress: "周期进度",
+    stat_bottom: "预期底部",
+    stat_price_sub: price => `2月低点:${fmt.usd(price.feb11_low)} · 近期枢轴:${fmt.usd(price.recent_pullback_low)}`,
+    stat_ath_sub: ath => `ATH ${fmt.usd(ath)}`,
+    stat_progress_sub: d => `顶→底(均 ${d}日)`,
+    cycle_pos: (d, w) => `距顶部 ${d} 天 · 预期底部 ${w}`,
+    verdict_title: "当前决策",
+    verdict_count_label: "信号已触发",
+    verdict_execute: "EXECUTE LEVERAGE 执行加杠杆",
+    verdict_prepare: "PREPARE LEVERAGE 准备开杠杆",
+    verdict_dca: "CONTINUE DCA 继续定投",
+    verdict_execute_detail: l => `4/5 触发 —— 按计划开启 ${l.target_leverage} 杠杆,借入 ${l.target_borrow_usd}`,
+    verdict_prepare_detail: (t, p) => `${t} 触发 + ${p} 接近 —— 准备 OKX 开仓流程,监控剩余信号`,
+    verdict_dca_detail: (t, p, pd) => `${t} 触发 / ${p} 接近 / ${pd} 未触发 —— 继续定投,等更多信号确认`,
+    signals_title: "5 个底部反转信号",
+    signal_label: (id, w) => `信号 ${id} · 权重 ${w}%`,
+    field_current: "当前状态",
+    field_trigger: "触发条件",
+    field_gap: "距离触发还差什么",
+    field_level: "关键位",
+    status_triggered: "已触发",
+    status_partial: "部分",
+    status_pending: "未触发",
+    dca_title: "DCA 进度",
+    dca_week_label: "当前周数",
+    dca_deployed_label: "占剩余 30% 的比例",
+    dca_deployed: n => `已买入 ${fmt.usd(n)}`,
+    dca_remaining: w => `还剩 ${w} 周`,
+    dca_bought: (u, p) => `<strong style="color: var(--green);">本周已买:</strong> ${fmt.usd(u)} @ ${fmt.usd(p)}`,
+    dca_pending: dca => `<strong style="color: var(--amber);">本周待买:</strong> ~${fmt.usd(dca.weekly_amount_base)}(占剩余的 ${dca.weekly_pct_base}%) · 加速规则:${dca.acceleration_rules.cn}`,
+    leverage_title: "杠杆就绪度",
+    leverage_req_label: "执行所需信号数",
+    leverage_params: l => `
+      <div><span class="k">目标杠杆:</span> <span class="v">${l.target_leverage}</span></div>
+      <div><span class="k">借入规模:</span> <span class="v">${l.target_borrow_usd}</span></div>
+      <div><span class="k">利率上限:</span> <span class="v">${l.max_borrow_rate}</span></div>
+      <div><span class="k">爆仓缓冲:</span> <span class="v">${l.liquidation_buffer}</span></div>
+      <div><span class="k">持有周期:</span> <span class="v">2–3 年,完整周期</span></div>`,
+    events_title: "近期关键事件",
+    legend_triggered: "已触发",
+    legend_partial: "部分触发 / 接近",
+    legend_pending: "未触发",
+    legend_framework: "框架:5 信号加权 · 杠杆门槛:4/5 触发",
+    theory_title: "📘 核心初衷 · 理论框架 · 使用方法",
+    theory_body: `
+      <div class="theory-block">
+        <h4>核心初衷 · Why This Exists</h4>
+        <p>比特币底部往往形成于情绪最恐慌、价格最痛苦的时刻。凭主观感觉抄底极容易受情绪干扰 —— <strong>要么过早上车被反复洗盘,要么错过真正的底部</strong>。</p>
+        <p>这个 dashboard 的目标是把抄底决策<strong>系统化</strong>:把 5 个在历史上被反复验证过的底部信号量化成可追踪的状态,日常只看信号,不看市场情绪。</p>
+        <p>服务于 Jason 的具体决策:(1) 何时加速 DCA;(2) 何时在 BTC 现货之上加 1.1–1.15x 低杠杆;(3) 杠杆触发前绝不提前行动。</p>
+      </div>
+      <div class="theory-block">
+        <h4>四年周期理论 · 4-Year Cycle</h4>
+        <p>BTC 自创世以来呈现清晰的 4 年周期结构,由减半(Halving)供给冲击 + 全球流动性周期共同驱动:</p>
+        <ul>
+          <li><strong>减半日期:</strong><code>2012.11 / 2016.7 / 2020.5 / 2024.4 / ~2028.3</code></li>
+          <li><strong>历史顶部:</strong>2017.12($19,665)/ 2021.11($69,044)/ 2025.10($126,210)</li>
+          <li><strong>历史底部:</strong>2015.1($152)/ 2018.12($3,122)/ 2022.11($15,476)</li>
+          <li><strong>顶→底平均时长:</strong>~370 天;<strong>底→顶平均:</strong>~1,065 天</li>
+          <li><strong>本轮位置:</strong>距 2025/10 顶部约 193 天 → 预期底部窗口 <code>2026 Q3–Q4(8–11 月)</code></li>
+        </ul>
+      </div>
+      <div class="theory-block">
+        <h4>为什么是这 5 个信号 · Why 5 Signals</h4>
+        <p>任何单一信号都有假信号风险(2018/8 的 MACD 金叉在零轴上方随后破位)。<strong>5 个信号覆盖 5 个独立维度</strong>,共振才能大幅降低误判概率:</p>
+        <ul>
+          <li><strong>① 价格结构(Higher Low):</strong>技术层面最直接的情绪反映 —— 止跌的第一个信号</li>
+          <li><strong>② 动能(Weekly MACD):</strong>趋势变化的二阶导 —— 下跌动能衰竭的确认</li>
+          <li><strong>③ 链上(LTH):</strong>长期持有者是"聪明钱",他们开始加仓是最可靠的滞后确认</li>
+          <li><strong>④ 机构需求(ETF):</strong>2024 年后的新维度 —— 真金白银的流入方向</li>
+          <li><strong>⑤ 宏观流动性(Fed/M2):</strong>最底层驱动力 —— 决定所有风险资产的估值中枢</li>
+        </ul>
+        <p>历史回测:2019/1 和 2022/12 两次底部前后 1–2 个月内,4+ 信号同时触发。任一落单都可能是假信号,共振是关键。</p>
+      </div>
+      <div class="theory-block">
+        <h4>使用方法 · How to Use</h4>
+        <ul>
+          <li><strong>持续 DCA:</strong>每周 1.5% 固定买入 —— 降低择时风险,用时间换空间</li>
+          <li><strong>信号追踪:</strong>每日/每周检查 5 信号状态 —— Dashboard 顶部 Verdict 栏给出行动建议</li>
+          <li><strong>加速 DCA:</strong>BTC 单周跌 >10% → 买 3%;>20% → 买 5%</li>
+          <li><strong>杠杆开仓:</strong>严守 4/5 信号触发门槛,1.1–1.15x 低杠杆,借入 $500K–$750K</li>
+          <li><strong>全周期持有:</strong>底部加杠杆后持有至下一轮顶部(预期 2027–2028),不做短期择时</li>
+        </ul>
+      </div>
+      <div class="theory-block">
+        <h4>风险提示 · Caveats</h4>
+        <ul>
+          <li>4 年周期可能因 ETF 化、机构化而被压平或延长,历史模式非必然重现</li>
+          <li>系统性黑天鹅(监管/地缘/交易所崩溃)可能让所有信号集体失效</li>
+          <li>即使 1.1x 低杠杆,极端行情下也可能触发保证金追缴 —— 必须预留缓冲</li>
+          <li>信号追踪不等于精确抄底 —— 4/5 触发后可能仍有 10–15% 的最后一跌</li>
+        </ul>
+      </div>`
+  },
+  en: {
+    subtitle: "5-signal bottom framework · Daily status monitor",
+    updated_label: "Updated",
+    stat_price: "BTC Price",
+    stat_drawdown: "ATH Drawdown",
+    stat_days: "Days from Top",
+    stat_top_on: "Top on",
+    stat_progress: "Cycle Progress",
+    stat_bottom: "Expected Bottom",
+    stat_price_sub: price => `Feb 11 low: ${fmt.usd(price.feb11_low)} · Recent pivot: ${fmt.usd(price.recent_pullback_low)}`,
+    stat_ath_sub: ath => `ATH ${fmt.usd(ath)}`,
+    stat_progress_sub: d => `Top → Bottom (avg ${d}d)`,
+    cycle_pos: (d, w) => `Day ${d} from top · Expected bottom ${w}`,
+    verdict_title: "Current Verdict",
+    verdict_count_label: "Signals Triggered",
+    verdict_execute: "EXECUTE LEVERAGE",
+    verdict_prepare: "PREPARE LEVERAGE",
+    verdict_dca: "CONTINUE DCA",
+    verdict_execute_detail: l => `4/5 triggered — open ${l.target_leverage} leverage per plan, borrow ${l.target_borrow_usd}`,
+    verdict_prepare_detail: (t, p) => `${t} triggered + ${p} partial — prepare OKX margin flow, monitor remaining signals`,
+    verdict_dca_detail: (t, p, pd) => `${t} triggered / ${p} partial / ${pd} pending — keep DCA, wait for more confirmation`,
+    signals_title: "5 Bottom-Reversal Signals",
+    signal_label: (id, w) => `SIGNAL ${id} · Weight ${w}%`,
+    field_current: "Current",
+    field_trigger: "Trigger",
+    field_gap: "Gap to Trigger",
+    field_level: "Key Level",
+    status_triggered: "Triggered",
+    status_partial: "Partial",
+    status_pending: "Pending",
+    dca_title: "DCA Progress",
+    dca_week_label: "Current Week",
+    dca_deployed_label: "Deployed of 30%",
+    dca_deployed: n => `Deployed ${fmt.usd(n)}`,
+    dca_remaining: w => `${w} weeks remaining`,
+    dca_bought: (u, p) => `<strong style="color: var(--green);">Bought this week:</strong> ${fmt.usd(u)} @ ${fmt.usd(p)}`,
+    dca_pending: dca => `<strong style="color: var(--amber);">To buy this week:</strong> ~${fmt.usd(dca.weekly_amount_base)} (${dca.weekly_pct_base}% of remaining) · Acceleration: ${dca.acceleration_rules.en}`,
+    leverage_title: "Leverage Readiness",
+    leverage_req_label: "Signals Required to Execute",
+    leverage_params: l => `
+      <div><span class="k">Target leverage:</span> <span class="v">${l.target_leverage}</span></div>
+      <div><span class="k">Borrow size:</span> <span class="v">${l.target_borrow_usd}</span></div>
+      <div><span class="k">Max rate:</span> <span class="v">${l.max_borrow_rate}</span></div>
+      <div><span class="k">Liq buffer:</span> <span class="v">${l.liquidation_buffer}</span></div>
+      <div><span class="k">Hold period:</span> <span class="v">2–3 years, full cycle</span></div>`,
+    events_title: "Key Events Ahead",
+    legend_triggered: "Confirmed",
+    legend_partial: "Forming / close",
+    legend_pending: "Not yet",
+    legend_framework: "Framework: 5 weighted signals · Leverage gate: 4/5 triggered",
+    theory_title: "📘 Purpose · Theory · How to Use",
+    theory_body: `
+      <div class="theory-block">
+        <h4>Why This Exists · 核心初衷</h4>
+        <p>BTC bottoms form when fear is peak and prices are most painful. Gut-feel bottom-picking is emotionally compromised — <strong>you either buy too early and get shaken out, or miss the real bottom entirely</strong>.</p>
+        <p>This dashboard <strong>systematizes</strong> the bottom-call: it turns 5 historically reliable signals into daily-trackable states. Watch the signals, not the sentiment.</p>
+        <p>Serves Jason's specific decisions: (1) when to accelerate DCA, (2) when to add 1.1–1.15x leverage on top of BTC spot, (3) no action before the gate is met.</p>
+      </div>
+      <div class="theory-block">
+        <h4>4-Year Cycle Theory · 四年周期</h4>
+        <p>BTC has exhibited a clean 4-year cycle driven by halving supply shocks + global liquidity cycles:</p>
+        <ul>
+          <li><strong>Halvings:</strong> <code>2012.11 / 2016.7 / 2020.5 / 2024.4 / ~2028.3</code></li>
+          <li><strong>Historical tops:</strong> 2017.12 ($19,665) / 2021.11 ($69,044) / 2025.10 ($126,210)</li>
+          <li><strong>Historical bottoms:</strong> 2015.1 ($152) / 2018.12 ($3,122) / 2022.11 ($15,476)</li>
+          <li><strong>Top → Bottom avg:</strong> ~370 days; <strong>Bottom → Top avg:</strong> ~1,065 days</li>
+          <li><strong>Current position:</strong> ~193 days past 2025-10 top → expected bottom window <code>2026 Q3–Q4 (Aug–Nov)</code></li>
+        </ul>
+      </div>
+      <div class="theory-block">
+        <h4>Why 5 Signals · 信号设计</h4>
+        <p>Any single signal has false-positive risk (2018/8 MACD cross above zero then broke down). <strong>5 signals cover 5 independent dimensions</strong> — only the resonance is reliable:</p>
+        <ul>
+          <li><strong>① Price structure (Higher Low):</strong> purest technical reflection of sentiment — the first stop-bleeding sign</li>
+          <li><strong>② Momentum (Weekly MACD):</strong> second derivative of trend — exhaustion of downside momentum</li>
+          <li><strong>③ On-chain (LTH):</strong> long-term holders are "smart money" — their accumulation is the most reliable lagging confirmation</li>
+          <li><strong>④ Institutional demand (ETF):</strong> new dimension post-2024 — real capital inflow direction</li>
+          <li><strong>⑤ Macro liquidity (Fed/M2):</strong> base-layer driver — sets the valuation regime for all risk assets</li>
+        </ul>
+        <p>Historical backtest: 4+ signals triggered within 1–2 months of the 2019/1 and 2022/12 bottoms. Any single signal can be noise; resonance is the edge.</p>
+      </div>
+      <div class="theory-block">
+        <h4>How to Use · 使用方法</h4>
+        <ul>
+          <li><strong>Continuous DCA:</strong> 1.5% weekly — reduces timing risk, trades time for certainty</li>
+          <li><strong>Signal tracking:</strong> daily/weekly check of the 5 signals — verdict bar at top gives the action</li>
+          <li><strong>DCA acceleration:</strong> BTC drops >10% weekly → buy 3%; >20% → buy 5%</li>
+          <li><strong>Leverage entry:</strong> only when 4/5 signals triggered, 1.1–1.15x, borrow $500K–$750K</li>
+          <li><strong>Full-cycle hold:</strong> hold leveraged position through next cycle top (expected 2027–2028), no short-term timing</li>
+        </ul>
+      </div>
+      <div class="theory-block">
+        <h4>Caveats · 风险提示</h4>
+        <ul>
+          <li>The 4-year cycle may flatten or extend under ETF/institutional flows — historical patterns are not guaranteed</li>
+          <li>Systemic black swans (regulation / geopolitics / exchange collapse) can invalidate all signals simultaneously</li>
+          <li>Even 1.1x leverage can face margin calls in extreme moves — keep buffer beyond the stated liquidation threshold</li>
+          <li>Signal tracking ≠ precise bottom call — 10–15% final flush after 4/5 triggered is entirely possible</li>
+        </ul>
+      </div>`
+  }
 };
 
 const INLINE_DATA = {
   "updated": "2026-04-17",
   "btc": { "price": 75428, "ath": 126210, "ath_date": "2025-10-06", "feb11_low": 60074, "recent_pullback_low": 66000 },
-  "cycle": { "days_from_top": 193, "expected_bottom_window": "2026 Q3-Q4 (Aug–Nov)", "expected_bottom_price_range": "$44,000 – $63,000", "top_to_bottom_avg_days": 370 },
+  "cycle": {
+    "days_from_top": 193,
+    "expected_bottom_window": { "cn": "2026 Q3-Q4(8–11 月)", "en": "2026 Q3–Q4 (Aug–Nov)" },
+    "expected_bottom_price_range": "$44,000 – $63,000",
+    "top_to_bottom_avg_days": 370
+  },
   "signals": [
-    { "id": 1, "name": "Higher Low", "name_cn": "周线高点抬高", "weight": 25, "status": "partial",
-      "current": "Feb 11 低点 $60,074 → 反弹至 $76K → 4 月初回踩 $66K → 反弹至 $75K",
-      "trigger": "再次回踩时周收盘 > $60,074,形成 A<B 结构",
-      "gap": "需要一次新的回踩测试 $60K–$66K 区间不破,并周线反弹确认。当前结构仍在构筑中。",
-      "key_level": "$60,074 (2月低点) / $66,000 (近期枢轴)",
-      "historical": "2019 ($3,122→$3,400) 和 2023 ($15,476→$16,500) 都应验;2018 年 $6K 假信号后破位" },
-    { "id": 2, "name": "Weekly MACD Bullish Cross (Below Zero)", "name_cn": "周线 MACD 零轴下方金叉", "weight": 20, "status": "partial",
-      "current": "周线 MACD 接近 2025 年 5 月以来首次金叉,DIF/DEA 均在零轴下方 —— 符合底部信号特征",
-      "trigger": "周收盘确认 DIF 上穿 DEA,且两条线都位于或接近零轴下方,histogram 转正",
-      "gap": "本周五收盘需确认金叉。若零轴上方金叉不算(2018/8 和 2022/3 都是假信号)。",
-      "key_level": "DIF 与 DEA 均需 < 0",
-      "historical": "2019/2 和 2023/1 都在零轴下方金叉后确认底部" },
-    { "id": 3, "name": "LTH Net Position Change Turns Positive", "name_cn": "长期持有者转为净买入", "weight": 20, "status": "pending",
-      "current": "Glassnode 显示 LTH 仍在分发区间;LTH 供应占比约 80%,距 85% 历史底部阈值仍差 ~5 个百分点",
-      "trigger": "LTH Net Position Change 连续 2 周为正值(净买入)",
-      "gap": "至少需要 2-3 个月时间,LTH 通常在价格底部之后 1 个月才转正。耐心等待滞后确认。",
-      "key_level": "LTH Supply % ≥ 85%,Net Position Change > 0",
-      "historical": "2019/1 和 2022/12 均在底部之后 1 个月转正,滞后但可靠" },
-    { "id": 4, "name": "US Spot BTC ETF 2-Week Net Inflows", "name_cn": "美国现货 BTC ETF 连续 2 周净流入", "weight": 15, "status": "partial",
-      "current": "本周 $1.1B 净流入(4 个月高点,IBIT $871M、FBTC $98M、MSBT $14.9M);但上周刚出现 5 日连续 $1.72B 净流出",
-      "trigger": "连续 2 周 (10+ 交易日) 净流入,且多数交易日为正",
-      "gap": "下周需要继续保持净流入,凑齐 2 连阳。单周反弹不算。",
-      "key_level": "周度净流入连续 2 周 > 0",
-      "historical": "ETF 2024/1 上线后,持续流入曾推动 BTC 从 $42K → $73K" },
-    { "id": 5, "name": "Macro Liquidity Inflection", "name_cn": "宏观流动性拐点", "weight": 20, "status": "partial",
-      "current": "Fed funds 3.50–3.75%(1 月以来按兵不动);点阵图中位数 2026 年仅 1 次降息;10Y 约 4.24%;霍尔木兹局势推高油价",
-      "trigger": "满足任一:(a) Fed 暂停/降息,(b) 10Y 连续 2 个月下行,(c) 全球 M2 增速筑底回升",
-      "gap": "短期 Fed 不会降息。需等 10Y 跌破 4.0% 并持续,或 4/29 FOMC 释放鸽派信号,或油价回落缓解通胀压力。",
-      "key_level": "Fed funds < 3.50% / 10Y < 4.00% / M2 YoY 转正",
-      "historical": "2019/1 Fed 暂停 → BTC 同月见底;2022/10 10Y 见顶 → BTC 一个月后见底" }
+    { "id": 1, "weight": 25, "status": "partial",
+      "name": { "cn": "周线高点抬高", "en": "Higher Low (Weekly)" },
+      "sub":  { "cn": "Higher Low", "en": "周线高点抬高" },
+      "current":    { "cn": "Feb 11 低点 $60,074 → 反弹至 $76K → 4 月初回踩 $66K → 反弹至 $75K",
+                      "en": "Feb 11 low $60,074 → bounce to $76K → early-April pullback to $66K → rebound to $75K" },
+      "trigger":    { "cn": "再次回踩时周收盘 > $60,074,形成 A<B 结构",
+                      "en": "On next pullback, weekly close > $60,074, forming A<B higher-low structure" },
+      "gap":        { "cn": "需要一次新的回踩测试 $60K–$66K 区间不破,并周线反弹确认。当前结构仍在构筑中。",
+                      "en": "Need a fresh pullback to $60K–$66K that holds, with a weekly bounce confirm. Structure still forming." },
+      "key_level":  { "cn": "$60,074(2月低点)/ $66,000(近期枢轴)",
+                      "en": "$60,074 (Feb low) / $66,000 (recent pivot)" },
+      "historical": { "cn": "2019($3,122→$3,400)和 2023($15,476→$16,500)都应验;2018 年 $6K 假信号后破位",
+                      "en": "Confirmed 2019 ($3,122→$3,400) and 2023 ($15,476→$16,500); false signal 2018 at $6K broke down" } },
+    { "id": 2, "weight": 20, "status": "partial",
+      "name": { "cn": "周线 MACD 零轴下方金叉", "en": "Weekly MACD Cross (Below Zero)" },
+      "sub":  { "cn": "Weekly MACD Bullish Cross", "en": "周线 MACD 金叉" },
+      "current":    { "cn": "周线 MACD 接近 2025 年 5 月以来首次金叉,DIF/DEA 均在零轴下方 —— 符合底部信号特征",
+                      "en": "Weekly MACD near first bullish cross since May 2025; DIF/DEA both below zero — classic bottom setup" },
+      "trigger":    { "cn": "周收盘确认 DIF 上穿 DEA,且两条线都位于或接近零轴下方,histogram 转正",
+                      "en": "Weekly close confirms DIF crossing above DEA, both lines at/below zero, histogram flips green" },
+      "gap":        { "cn": "本周五收盘需确认金叉。零轴上方金叉不算(2018/8 和 2022/3 都是假信号)。",
+                      "en": "Friday weekly close must confirm. Above-zero crosses don't count (2018/8 and 2022/3 were false)." },
+      "key_level":  { "cn": "DIF 与 DEA 均需 < 0", "en": "DIF and DEA must both be < 0" },
+      "historical": { "cn": "2019/2 和 2023/1 都在零轴下方金叉后确认底部",
+                      "en": "Both 2019/2 and 2023/1 confirmed bottoms via below-zero crosses" } },
+    { "id": 3, "weight": 20, "status": "pending",
+      "name": { "cn": "长期持有者转为净买入", "en": "LTH Net Position Turns Positive" },
+      "sub":  { "cn": "LTH Net Accumulation", "en": "长期持有者累积" },
+      "current":    { "cn": "Glassnode 显示 LTH 仍在分发区间;LTH 供应占比约 80%,距 85% 历史底部阈值仍差 ~5 个百分点",
+                      "en": "Glassnode shows LTH still in distribution; LTH supply ~80%, ~5pp below the 85% historical bottom threshold" },
+      "trigger":    { "cn": "LTH Net Position Change 连续 2 周为正值(净买入)",
+                      "en": "LTH Net Position Change positive for 2 consecutive weeks (net buying)" },
+      "gap":        { "cn": "至少需要 2–3 个月时间。LTH 通常在价格底部之后 1 个月才转正,耐心等待滞后确认。",
+                      "en": "Needs 2–3 months. LTH typically flips positive ~1 month AFTER price bottom — lagging confirm." },
+      "key_level":  { "cn": "LTH Supply % ≥ 85%,Net Position Change > 0",
+                      "en": "LTH Supply % ≥ 85%, Net Position Change > 0" },
+      "historical": { "cn": "2019/1 和 2022/12 均在底部之后 1 个月转正,滞后但可靠",
+                      "en": "Flipped positive 1 month after bottom in both 2019/1 and 2022/12 — lagging but reliable" } },
+    { "id": 4, "weight": 15, "status": "partial",
+      "name": { "cn": "美国现货 BTC ETF 连续 2 周净流入", "en": "US Spot BTC ETF 2-Week Net Inflows" },
+      "sub":  { "cn": "ETF Flows", "en": "ETF 资金流" },
+      "current":    { "cn": "本周 $1.1B 净流入(4 个月高点,IBIT $871M、FBTC $98M、MSBT $14.9M);但上周刚出现 5 日连续 $1.72B 净流出",
+                      "en": "This week $1.1B net inflow (4-month high; IBIT $871M, FBTC $98M, MSBT $14.9M); prior week had 5-day $1.72B outflow streak" },
+      "trigger":    { "cn": "连续 2 周(10+ 交易日)净流入,且多数交易日为正",
+                      "en": "2 consecutive weeks (10+ trading days) of net inflows, majority of days positive" },
+      "gap":        { "cn": "下周需要继续保持净流入,凑齐 2 连阳。单周反弹不算。",
+                      "en": "Next week must continue positive to stack 2 straight. Single-week bounce doesn't qualify." },
+      "key_level":  { "cn": "周度净流入连续 2 周 > 0", "en": "Weekly net flow > 0 for 2 consecutive weeks" },
+      "historical": { "cn": "ETF 2024/1 上线后,持续流入曾推动 BTC 从 $42K → $73K",
+                      "en": "Post-2024/1 launch, sustained inflows drove BTC from $42K → $73K" } },
+    { "id": 5, "weight": 20, "status": "partial",
+      "name": { "cn": "宏观流动性拐点", "en": "Macro Liquidity Inflection" },
+      "sub":  { "cn": "Fed / 10Y / M2", "en": "美联储 / 10Y / M2" },
+      "current":    { "cn": "Fed funds 3.50–3.75%(1 月以来按兵不动);点阵图中位数 2026 年仅 1 次降息;10Y 约 4.24%;霍尔木兹局势推高油价",
+                      "en": "Fed funds 3.50–3.75% (hold since Jan); dot plot median 1 cut in 2026; 10Y ~4.24%; Strait of Hormuz pushing oil up" },
+      "trigger":    { "cn": "满足任一:(a) Fed 暂停/降息,(b) 10Y 连续 2 个月下行,(c) 全球 M2 增速筑底回升",
+                      "en": "Any of: (a) Fed pause/cut, (b) 10Y trending down for 2+ months, (c) global M2 growth bottoms and rises" },
+      "gap":        { "cn": "短期 Fed 不会降息。需等 10Y 跌破 4.0% 并持续,或 4/29 FOMC 释放鸽派信号,或油价回落缓解通胀压力。",
+                      "en": "Fed won't cut near-term. Need 10Y to break below 4.00% and stay, or dovish 4/29 FOMC, or oil pullback easing inflation." },
+      "key_level":  { "cn": "Fed funds < 3.50% / 10Y < 4.00% / M2 YoY 转正",
+                      "en": "Fed funds < 3.50% / 10Y < 4.00% / M2 YoY turns positive" },
+      "historical": { "cn": "2019/1 Fed 暂停 → BTC 同月见底;2022/10 10Y 见顶 → BTC 一个月后见底",
+                      "en": "2019/1 Fed pause → BTC bottomed same month; 2022/10 10Y peaked → BTC bottomed 1 month later" } }
   ],
-  "dca": { "start_date": "2026-04-14", "week": 1, "total_weeks": 20, "weekly_pct_base": 1.5, "weekly_amount_base": 75000,
+  "dca": {
+    "start_date": "2026-04-14", "week": 1, "total_weeks": 20, "weekly_pct_base": 1.5, "weekly_amount_base": 75000,
     "remaining_allocation_pct": 30, "total_portfolio_usd": 5000000, "deployed_usd": 0, "deployed_pct": 0,
     "this_week_buy_usd": null, "this_week_buy_price": null,
-    "acceleration_rules": "若 BTC 周跌 >10%,买 3%;>20%,买 5%" },
+    "acceleration_rules": { "cn": "若 BTC 周跌 >10%,买 3%;>20%,买 5%",
+                            "en": "If BTC drops >10% weekly, buy 3%; >20%, buy 5%" }
+  },
   "leverage": { "signals_triggered": 0, "signals_required": 4, "target_leverage": "1.10x – 1.15x",
     "target_borrow_usd": "$500K – $750K", "max_borrow_rate": "12% APR", "liquidation_buffer": ">85% below entry" },
   "events_next_week": [
-    { "date": "2026-04-28 ~ 04-29", "name": "FOMC Meeting + Powell Press Conference", "impact": "影响 Signal 5 —— 鸽派基调利好,鹰派将推后降息预期" },
-    { "date": "2026-04-30", "name": "US March PCE Inflation", "impact": "影响 Signal 5 —— 核心 PCE 粘滞则 Fed 降息预期后延" },
-    { "date": "Ongoing", "name": "Middle East / Strait of Hormuz", "impact": "油价破 $95 将压制风险资产,复杂化 Fed 路径" },
-    { "date": "Weekly", "name": "US Spot BTC ETF Daily Flows", "impact": "Signal 4 需下周继续净流入凑齐 2 连阳" }
+    { "date": "2026-04-28 ~ 04-29",
+      "name":   { "cn": "FOMC 会议 + 鲍威尔发布会", "en": "FOMC Meeting + Powell Press Conference" },
+      "impact": { "cn": "影响 Signal 5 —— 鸽派基调利好,鹰派将推后降息预期",
+                  "en": "Affects Signal 5 — dovish tone bullish; hawkish pushes back cut expectations" } },
+    { "date": "2026-04-30",
+      "name":   { "cn": "美国 3 月核心 PCE", "en": "US March Core PCE" },
+      "impact": { "cn": "影响 Signal 5 —— 核心 PCE 粘滞则 Fed 降息预期后延",
+                  "en": "Affects Signal 5 — sticky core PCE delays cut expectations" } },
+    { "date": "Ongoing",
+      "name":   { "cn": "中东 / 霍尔木兹海峡", "en": "Middle East / Strait of Hormuz" },
+      "impact": { "cn": "油价破 $95 将压制风险资产,复杂化 Fed 路径",
+                  "en": "Oil above $95 pressures risk assets, complicates Fed path" } },
+    { "date": "Weekly",
+      "name":   { "cn": "美国现货 BTC ETF 日度资金流", "en": "US Spot BTC ETF Daily Flows" },
+      "impact": { "cn": "Signal 4 需下周继续净流入凑齐 2 连阳",
+                  "en": "Signal 4 needs next week's inflows to stack 2 consecutive weeks" } }
   ]
 };
+
+// i18n helpers
+let currentLang = localStorage.getItem('lang') || 'cn';
+let currentData = null;
+
+const tr = (field, lang = currentLang) => {
+  if (field == null) return '';
+  if (typeof field === 'string' || typeof field === 'number') return field;
+  return field[lang] ?? field.cn ?? field.en ?? '';
+};
+
+function applyStaticI18n() {
+  const T = UI_TEXT[currentLang];
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (T[key] != null) el.textContent = T[key];
+  });
+  document.getElementById('updated-label').textContent = T.updated_label;
+  document.querySelector('.subtitle').innerHTML =
+    `${T.subtitle} · <span id="cycle-pos"></span>`;
+  document.getElementById('theory-title').textContent = T.theory_title;
+  document.getElementById('theory-body').innerHTML = T.theory_body;
+  document.getElementById('lang-cn').classList.toggle('active', currentLang === 'cn');
+  document.getElementById('lang-en').classList.toggle('active', currentLang === 'en');
+}
 
 async function load() {
   try {
     const res = await fetch('data.json?t=' + Date.now());
     if (!res.ok) throw new Error('fetch failed');
-    render(await res.json());
+    currentData = await res.json();
   } catch (e) {
-    render(INLINE_DATA);
+    currentData = INLINE_DATA;
   }
+  applyStaticI18n();
+  render(currentData);
 }
 
 function render(d) {
+  const T = UI_TEXT[currentLang];
+
   // Header
   document.getElementById('updated').textContent = d.updated;
   document.getElementById('cycle-pos').textContent =
-    `Day ${d.cycle.days_from_top} from top · Expected bottom ${d.cycle.expected_bottom_window}`;
+    T.cycle_pos(d.cycle.days_from_top, tr(d.cycle.expected_bottom_window));
 
   // Top stats
   document.getElementById('btc-price').textContent = fmt.usd(d.btc.price);
-  document.getElementById('btc-price-sub').textContent =
-    `Feb 11 low: ${fmt.usd(d.btc.feb11_low)} · Recent pivot: ${fmt.usd(d.btc.recent_pullback_low)}`;
+  document.getElementById('btc-price-sub').textContent = T.stat_price_sub(d.btc);
 
   const dd = (d.btc.price - d.btc.ath) / d.btc.ath * 100;
   document.getElementById('drawdown').textContent = fmt.pct(dd);
-  document.getElementById('ath-sub').textContent = `ATH ${fmt.usd(d.btc.ath)}`;
+  document.getElementById('ath-sub').textContent = T.stat_ath_sub(d.btc.ath);
   document.getElementById('ath-date').textContent = d.btc.ath_date;
 
   document.getElementById('days-from-top').textContent = d.cycle.days_from_top;
-
   const cyclePct = Math.min(100, Math.round(d.cycle.days_from_top / d.cycle.top_to_bottom_avg_days * 100));
   document.getElementById('cycle-progress').textContent = cyclePct + '%';
-  document.getElementById('cycle-progress-sub').textContent =
-    `Top → Bottom (avg ${d.cycle.top_to_bottom_avg_days}d)`;
+  document.getElementById('cycle-progress-sub').textContent = T.stat_progress_sub(d.cycle.top_to_bottom_avg_days);
 
-  document.getElementById('bottom-window').textContent = d.cycle.expected_bottom_window;
+  document.getElementById('bottom-window').textContent = tr(d.cycle.expected_bottom_window);
   document.getElementById('bottom-price').textContent = d.cycle.expected_bottom_price_range;
 
   // Verdict
@@ -669,47 +1072,46 @@ function render(d) {
 
   if (triggered >= 4) {
     banner.classList.add('execute');
-    action.textContent = 'EXECUTE LEVERAGE';
-    detail.textContent = `4/5 触发 —— 按计划开启 ${d.leverage.target_leverage} 杠杆,借入 ${d.leverage.target_borrow_usd}`;
+    action.textContent = T.verdict_execute;
+    detail.textContent = T.verdict_execute_detail(d.leverage);
   } else if (triggered >= 2 || (triggered + partial) >= 4) {
     banner.classList.add('prepare');
-    action.textContent = 'PREPARE LEVERAGE';
-    detail.textContent = `${triggered} 触发 + ${partial} 接近 —— 准备 OKX 开仓流程,监控剩余信号`;
+    action.textContent = T.verdict_prepare;
+    detail.textContent = T.verdict_prepare_detail(triggered, partial);
   } else {
     banner.classList.add('continue-dca');
-    action.textContent = 'CONTINUE DCA';
-    detail.textContent = `${triggered} 触发 / ${partial} 接近 / ${5 - triggered - partial} 未触发 —— 继续定投,等更多信号确认`;
+    action.textContent = T.verdict_dca;
+    detail.textContent = T.verdict_dca_detail(triggered, partial, 5 - triggered - partial);
   }
 
   // Signal cards
-  const sContainer = document.getElementById('signals');
-  sContainer.innerHTML = d.signals.map(s => `
+  document.getElementById('signals').innerHTML = d.signals.map(s => `
     <div class="signal-card ${s.status}">
       <div class="signal-header">
         <div>
-          <div class="signal-number">SIGNAL ${s.id} · Weight ${s.weight}%</div>
-          <div class="signal-title">${s.name}</div>
-          <div class="signal-title-cn">${s.name_cn}</div>
+          <div class="signal-number">${T.signal_label(s.id, s.weight)}</div>
+          <div class="signal-title">${tr(s.name)}</div>
+          <div class="signal-title-cn">${tr(s.sub)}</div>
         </div>
-        <span class="signal-badge ${s.status}">${STATUS_MAP[s.status].icon} ${STATUS_MAP[s.status].label}</span>
+        <span class="signal-badge ${s.status}">${STATUS_MAP[s.status].icon} ${T['status_' + s.status]}</span>
       </div>
       <div class="signal-field">
-        <div class="field-label"><span class="field-label-icon current"></span>当前状态 · Current</div>
-        <div class="field-value">${s.current}</div>
+        <div class="field-label"><span class="field-label-icon current"></span>${T.field_current}</div>
+        <div class="field-value">${tr(s.current)}</div>
       </div>
       <div class="signal-field">
-        <div class="field-label"><span class="field-label-icon trigger"></span>触发条件 · Trigger</div>
-        <div class="field-value">${s.trigger}</div>
+        <div class="field-label"><span class="field-label-icon trigger"></span>${T.field_trigger}</div>
+        <div class="field-value">${tr(s.trigger)}</div>
       </div>
       <div class="signal-field">
-        <div class="field-label"><span class="field-label-icon gap"></span>距离触发还差什么 · Gap to Trigger</div>
-        <div class="field-value gap">${s.gap}</div>
+        <div class="field-label"><span class="field-label-icon gap"></span>${T.field_gap}</div>
+        <div class="field-value gap">${tr(s.gap)}</div>
       </div>
       <div class="signal-field">
-        <div class="field-label"><span class="field-label-icon level"></span>关键位 · Key Level</div>
-        <div class="field-value level">${s.key_level}</div>
+        <div class="field-label"><span class="field-label-icon level"></span>${T.field_level}</div>
+        <div class="field-value level">${tr(s.key_level)}</div>
       </div>
-      <div class="historical">📜 ${s.historical}</div>
+      <div class="historical">📜 ${tr(s.historical)}</div>
     </div>
   `).join('');
 
@@ -718,15 +1120,15 @@ function render(d) {
   document.getElementById('dca-total').textContent = d.dca.total_weeks;
   document.getElementById('dca-pct').textContent = d.dca.deployed_pct;
   document.getElementById('dca-fill').style.width = d.dca.deployed_pct + '%';
-  document.getElementById('dca-deployed').textContent = `Deployed ${fmt.usd(d.dca.deployed_usd)}`;
+  document.getElementById('dca-deployed').textContent = T.dca_deployed(d.dca.deployed_usd);
   const remainingWeeks = d.dca.total_weeks - d.dca.week + 1;
-  document.getElementById('dca-remaining').textContent = `${remainingWeeks} weeks remaining`;
+  document.getElementById('dca-remaining').textContent = T.dca_remaining(remainingWeeks);
 
   const tw = document.getElementById('this-week');
   if (d.dca.this_week_buy_usd) {
-    tw.innerHTML = `<strong style="color: var(--green);">本周已买:</strong> ${fmt.usd(d.dca.this_week_buy_usd)} @ ${fmt.usd(d.dca.this_week_buy_price)}`;
+    tw.innerHTML = T.dca_bought(d.dca.this_week_buy_usd, d.dca.this_week_buy_price);
   } else {
-    tw.innerHTML = `<strong style="color: var(--amber);">本周待买:</strong> ~${fmt.usd(d.dca.weekly_amount_base)} (${d.dca.weekly_pct_base}% of remaining) · 加速规则:${d.dca.acceleration_rules}`;
+    tw.innerHTML = T.dca_pending(d.dca);
   }
 
   // Leverage
@@ -741,23 +1143,28 @@ function render(d) {
     else if (i < triggered + partial) dot.classList.add('partial');
     gaugeDots.appendChild(dot);
   }
-
-  document.getElementById('leverage-params').innerHTML = `
-    <div><span class="k">目标杠杆:</span> <span class="v">${d.leverage.target_leverage}</span></div>
-    <div><span class="k">借入规模:</span> <span class="v">${d.leverage.target_borrow_usd}</span></div>
-    <div><span class="k">利率上限:</span> <span class="v">${d.leverage.max_borrow_rate}</span></div>
-    <div><span class="k">爆仓缓冲:</span> <span class="v">${d.leverage.liquidation_buffer}</span></div>
-    <div><span class="k">持有周期:</span> <span class="v">2–3 years, full cycle</span></div>
-  `;
+  document.getElementById('leverage-params').innerHTML = T.leverage_params(d.leverage);
 
   // Events
   document.getElementById('events').innerHTML = d.events_next_week.map(e => `
     <div class="event-item">
       <div class="event-date">${e.date}</div>
-      <div class="event-name">${e.name}</div>
-      <div class="event-impact">${e.impact}</div>
+      <div class="event-name">${tr(e.name)}</div>
+      <div class="event-impact">${tr(e.impact)}</div>
     </div>
   `).join('');
+}
+
+// Language toggle
+document.getElementById('lang-cn').addEventListener('click', () => setLang('cn'));
+document.getElementById('lang-en').addEventListener('click', () => setLang('en'));
+function setLang(lang) {
+  if (lang === currentLang) return;
+  currentLang = lang;
+  localStorage.setItem('lang', lang);
+  document.documentElement.lang = lang === 'cn' ? 'zh-CN' : 'en';
+  applyStaticI18n();
+  if (currentData) render(currentData);
 }
 
 load();
