@@ -88,28 +88,10 @@
                       "en": "2019/1 Fed pause → BTC bottomed same month; 2022/10 10Y peaked → BTC bottomed 1 month later" }
     }
   ],
-  "dca": {
-    "start_date": "2026-04-14",
-    "week": 1,
-    "total_weeks": 20,
-    "weekly_pct_base": 1.5,
-    "weekly_amount_base": 75000,
-    "remaining_allocation_pct": 30,
-    "total_portfolio_usd": 5000000,
-    "deployed_usd": 0,
-    "deployed_pct": 0,
-    "this_week_buy_usd": null,
-    "this_week_buy_price": null,
-    "acceleration_rules": {
-      "cn": "若 BTC 周跌 >10%,买 3%;>20%,买 5%",
-      "en": "If BTC drops >10% weekly, buy 3%; >20%, buy 5%"
-    }
-  },
   "leverage": {
     "signals_triggered": 0,
     "signals_required": 4,
     "target_leverage": "1.10x – 1.15x",
-    "target_borrow_usd": "$500K – $750K",
     "max_borrow_rate": "12% APR",
     "liquidation_buffer": ">85% below entry"
   },

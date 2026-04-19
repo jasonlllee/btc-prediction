@@ -480,6 +480,46 @@
   }
   .header-right { display: flex; gap: 10px; align-items: center; }
 
+  /* Strategy card */
+  .strategy-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: -8px;
+    margin-bottom: 14px;
+  }
+  .strategy-list { display: flex; flex-direction: column; gap: 10px; }
+  .strategy-row {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 8px 10px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 6px;
+  }
+  .strategy-row .k {
+    font-size: 10px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .strategy-row .v {
+    font-size: 12px;
+    color: var(--text);
+    line-height: 1.4;
+  }
+  .strategy-note {
+    margin-top: 14px;
+    padding: 8px 10px;
+    background: var(--bg);
+    border: 1px dashed var(--border);
+    border-radius: 6px;
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
   /* Theory section */
   .theory {
     background: linear-gradient(135deg, rgba(247, 147, 26, 0.06), var(--bg-card));
@@ -634,22 +674,9 @@
   <div class="bottom-grid">
     <div class="bottom-card">
       <h3 data-i18n="dca_title"></h3>
-      <div class="dca-stats">
-        <div class="dca-stat-box">
-          <div class="dca-stat-num"><span id="dca-week"></span>/<span id="dca-total"></span></div>
-          <div class="dca-stat-label" data-i18n="dca_week_label"></div>
-        </div>
-        <div class="dca-stat-box">
-          <div class="dca-stat-num"><span id="dca-pct"></span>%</div>
-          <div class="dca-stat-label" data-i18n="dca_deployed_label"></div>
-        </div>
-      </div>
-      <div class="progress-bar"><div class="progress-fill" id="dca-fill" style="width: 0%;"></div></div>
-      <div class="progress-meta">
-        <span id="dca-deployed"></span>
-        <span id="dca-remaining"></span>
-      </div>
-      <div class="this-week" id="this-week"></div>
+      <div class="strategy-sub" id="dca-subtitle"></div>
+      <div class="strategy-list" id="strategy-list"></div>
+      <div class="strategy-note" id="strategy-note"></div>
     </div>
 
     <div class="bottom-card">
@@ -709,7 +736,7 @@ const UI_TEXT = {
     verdict_execute: "EXECUTE LEVERAGE 执行加杠杆",
     verdict_prepare: "PREPARE LEVERAGE 准备开杠杆",
     verdict_dca: "CONTINUE DCA 继续定投",
-    verdict_execute_detail: l => `4/5 触发 —— 按计划开启 ${l.target_leverage} 杠杆,借入 ${l.target_borrow_usd}`,
+    verdict_execute_detail: l => `4/5 触发 —— 可考虑开启 ${l.target_leverage} 杠杆(现货抵押借稳定币)`,
     verdict_prepare_detail: (t, p) => `${t} 触发 + ${p} 接近 —— 准备 OKX 开仓流程,监控剩余信号`,
     verdict_dca_detail: (t, p, pd) => `${t} 触发 / ${p} 接近 / ${pd} 未触发 —— 继续定投,等更多信号确认`,
     signals_title: "5 个底部反转信号",
@@ -721,21 +748,26 @@ const UI_TEXT = {
     status_triggered: "已触发",
     status_partial: "部分",
     status_pending: "未触发",
-    dca_title: "DCA 进度",
-    dca_week_label: "当前周数",
-    dca_deployed_label: "占剩余 30% 的比例",
-    dca_deployed: n => `已买入 ${fmt.usd(n)}`,
-    dca_remaining: w => `还剩 ${w} 周`,
-    dca_bought: (u, p) => `<strong style="color: var(--green);">本周已买:</strong> ${fmt.usd(u)} @ ${fmt.usd(p)}`,
-    dca_pending: dca => `<strong style="color: var(--amber);">本周待买:</strong> ~${fmt.usd(dca.weekly_amount_base)}(占剩余的 ${dca.weekly_pct_base}%) · 加速规则:${dca.acceleration_rules.cn}`,
+    dca_title: "DCA 策略",
+    dca_subtitle: "定投方法论(具体金额因人而异)",
+    strategy_base_label: "基础节奏",
+    strategy_base_value: "每周买入剩余现金仓位的 1–2%",
+    strategy_accel_label: "加速规则",
+    strategy_accel_value: "BTC 单周跌 >10% → 买 2–3x;跌 >20% → 3–5x",
+    strategy_window_label: "持续窗口",
+    strategy_window_value: "贯穿整个底部区间(2026 Q3–Q4)",
+    strategy_gate_label: "杠杆门槛",
+    strategy_gate_value: "5 信号中 4 个触发 → 考虑加杠杆",
+    strategy_note: "本 dashboard 不追踪个人仓位 —— 自己根据剩余现金 + 周期阶段决定单次买入金额。",
     leverage_title: "杠杆就绪度",
     leverage_req_label: "执行所需信号数",
     leverage_params: l => `
+      <div><span class="k">触发门槛:</span> <span class="v">5 信号中 4 个</span></div>
       <div><span class="k">目标杠杆:</span> <span class="v">${l.target_leverage}</span></div>
-      <div><span class="k">借入规模:</span> <span class="v">${l.target_borrow_usd}</span></div>
+      <div><span class="k">借款方式:</span> <span class="v">现货抵押借入稳定币(非永续)</span></div>
       <div><span class="k">利率上限:</span> <span class="v">${l.max_borrow_rate}</span></div>
       <div><span class="k">爆仓缓冲:</span> <span class="v">${l.liquidation_buffer}</span></div>
-      <div><span class="k">持有周期:</span> <span class="v">2–3 年,完整周期</span></div>`,
+      <div><span class="k">持有周期:</span> <span class="v">完整周期(预计 2–3 年至下轮顶部)</span></div>`,
     events_title: "近期关键事件",
     legend_triggered: "已触发",
     legend_partial: "部分触发 / 接近",
@@ -747,7 +779,7 @@ const UI_TEXT = {
         <h4>核心初衷 · Why This Exists</h4>
         <p>比特币底部往往形成于情绪最恐慌、价格最痛苦的时刻。凭主观感觉抄底极容易受情绪干扰 —— <strong>要么过早上车被反复洗盘,要么错过真正的底部</strong>。</p>
         <p>这个 dashboard 的目标是把抄底决策<strong>系统化</strong>:把 5 个在历史上被反复验证过的底部信号量化成可追踪的状态,日常只看信号,不看市场情绪。</p>
-        <p>服务于 Jason 的具体决策:(1) 何时加速 DCA;(2) 何时在 BTC 现货之上加 1.1–1.15x 低杠杆;(3) 杠杆触发前绝不提前行动。</p>
+        <p>它服务三个具体决策:(1) 何时加速 DCA;(2) 何时考虑加低倍数杠杆(如 1.1–1.15x);(3) 信号未到时严守纪律不提前行动。</p>
       </div>
       <div class="theory-block">
         <h4>四年周期理论 · 4-Year Cycle</h4>
@@ -775,12 +807,13 @@ const UI_TEXT = {
       <div class="theory-block">
         <h4>使用方法 · How to Use</h4>
         <ul>
-          <li><strong>持续 DCA:</strong>每周 1.5% 固定买入 —— 降低择时风险,用时间换空间</li>
+          <li><strong>持续 DCA:</strong>定期定额买入(建议剩余现金的 1–2%/周) —— 降低择时风险</li>
           <li><strong>信号追踪:</strong>每日/每周检查 5 信号状态 —— Dashboard 顶部 Verdict 栏给出行动建议</li>
-          <li><strong>加速 DCA:</strong>BTC 单周跌 >10% → 买 3%;>20% → 买 5%</li>
-          <li><strong>杠杆开仓:</strong>严守 4/5 信号触发门槛,1.1–1.15x 低杠杆,借入 $500K–$750K</li>
+          <li><strong>加速 DCA:</strong>BTC 单周跌 >10% → 加倍买入;>20% → 3–5x 加倍</li>
+          <li><strong>杠杆开仓:</strong>严守 4/5 信号触发门槛 · 低倍数(建议 ≤1.15x) · 现货抵押借稳定币(非永续合约)</li>
           <li><strong>全周期持有:</strong>底部加杠杆后持有至下一轮顶部(预期 2027–2028),不做短期择时</li>
         </ul>
+        <p style="margin-top:8px;font-size:11px;color:var(--text-muted);">⚠️ 上述比例为方法论参考,具体金额需根据个人总仓位、风险承受能力、剩余可用现金自行决定。本工具不构成投资建议。</p>
       </div>
       <div class="theory-block">
         <h4>风险提示 · Caveats</h4>
@@ -810,7 +843,7 @@ const UI_TEXT = {
     verdict_execute: "EXECUTE LEVERAGE",
     verdict_prepare: "PREPARE LEVERAGE",
     verdict_dca: "CONTINUE DCA",
-    verdict_execute_detail: l => `4/5 triggered — open ${l.target_leverage} leverage per plan, borrow ${l.target_borrow_usd}`,
+    verdict_execute_detail: l => `4/5 triggered — consider ${l.target_leverage} leverage (stablecoin loan vs spot collateral)`,
     verdict_prepare_detail: (t, p) => `${t} triggered + ${p} partial — prepare OKX margin flow, monitor remaining signals`,
     verdict_dca_detail: (t, p, pd) => `${t} triggered / ${p} partial / ${pd} pending — keep DCA, wait for more confirmation`,
     signals_title: "5 Bottom-Reversal Signals",
@@ -822,21 +855,26 @@ const UI_TEXT = {
     status_triggered: "Triggered",
     status_partial: "Partial",
     status_pending: "Pending",
-    dca_title: "DCA Progress",
-    dca_week_label: "Current Week",
-    dca_deployed_label: "Deployed of 30%",
-    dca_deployed: n => `Deployed ${fmt.usd(n)}`,
-    dca_remaining: w => `${w} weeks remaining`,
-    dca_bought: (u, p) => `<strong style="color: var(--green);">Bought this week:</strong> ${fmt.usd(u)} @ ${fmt.usd(p)}`,
-    dca_pending: dca => `<strong style="color: var(--amber);">To buy this week:</strong> ~${fmt.usd(dca.weekly_amount_base)} (${dca.weekly_pct_base}% of remaining) · Acceleration: ${dca.acceleration_rules.en}`,
+    dca_title: "DCA Strategy",
+    dca_subtitle: "Methodology only (sizing is personal)",
+    strategy_base_label: "Base cadence",
+    strategy_base_value: "Buy 1–2% of remaining cash position weekly",
+    strategy_accel_label: "Acceleration",
+    strategy_accel_value: "BTC drops >10% weekly → 2–3x base; >20% → 3–5x",
+    strategy_window_label: "Window",
+    strategy_window_value: "Run continuously through bottom zone (2026 Q3–Q4)",
+    strategy_gate_label: "Leverage gate",
+    strategy_gate_value: "4 of 5 signals triggered → consider adding leverage",
+    strategy_note: "This dashboard does NOT track personal positions — size each buy based on your own remaining cash and cycle stage.",
     leverage_title: "Leverage Readiness",
     leverage_req_label: "Signals Required to Execute",
     leverage_params: l => `
+      <div><span class="k">Trigger gate:</span> <span class="v">4 of 5 signals</span></div>
       <div><span class="k">Target leverage:</span> <span class="v">${l.target_leverage}</span></div>
-      <div><span class="k">Borrow size:</span> <span class="v">${l.target_borrow_usd}</span></div>
+      <div><span class="k">Borrow method:</span> <span class="v">Stablecoin loan vs spot collateral (no perp)</span></div>
       <div><span class="k">Max rate:</span> <span class="v">${l.max_borrow_rate}</span></div>
       <div><span class="k">Liq buffer:</span> <span class="v">${l.liquidation_buffer}</span></div>
-      <div><span class="k">Hold period:</span> <span class="v">2–3 years, full cycle</span></div>`,
+      <div><span class="k">Hold period:</span> <span class="v">Full cycle (~2–3 years to next top)</span></div>`,
     events_title: "Key Events Ahead",
     legend_triggered: "Confirmed",
     legend_partial: "Forming / close",
@@ -848,7 +886,7 @@ const UI_TEXT = {
         <h4>Why This Exists · 核心初衷</h4>
         <p>BTC bottoms form when fear is peak and prices are most painful. Gut-feel bottom-picking is emotionally compromised — <strong>you either buy too early and get shaken out, or miss the real bottom entirely</strong>.</p>
         <p>This dashboard <strong>systematizes</strong> the bottom-call: it turns 5 historically reliable signals into daily-trackable states. Watch the signals, not the sentiment.</p>
-        <p>Serves Jason's specific decisions: (1) when to accelerate DCA, (2) when to add 1.1–1.15x leverage on top of BTC spot, (3) no action before the gate is met.</p>
+        <p>It serves three decisions: (1) when to accelerate DCA, (2) when to consider adding low-multiple leverage (e.g. 1.1–1.15x) on top of BTC spot, (3) holding the line and not acting prematurely before the gate is met.</p>
       </div>
       <div class="theory-block">
         <h4>4-Year Cycle Theory · 四年周期</h4>
@@ -876,12 +914,13 @@ const UI_TEXT = {
       <div class="theory-block">
         <h4>How to Use · 使用方法</h4>
         <ul>
-          <li><strong>Continuous DCA:</strong> 1.5% weekly — reduces timing risk, trades time for certainty</li>
+          <li><strong>Continuous DCA:</strong> regular fixed-amount buys (suggested 1–2% of remaining cash weekly) — reduces timing risk</li>
           <li><strong>Signal tracking:</strong> daily/weekly check of the 5 signals — verdict bar at top gives the action</li>
-          <li><strong>DCA acceleration:</strong> BTC drops >10% weekly → buy 3%; >20% → buy 5%</li>
-          <li><strong>Leverage entry:</strong> only when 4/5 signals triggered, 1.1–1.15x, borrow $500K–$750K</li>
-          <li><strong>Full-cycle hold:</strong> hold leveraged position through next cycle top (expected 2027–2028), no short-term timing</li>
+          <li><strong>DCA acceleration:</strong> BTC drops >10% weekly → 2–3x base; >20% → 3–5x base</li>
+          <li><strong>Leverage entry:</strong> 4/5 signal gate · low multiple (≤1.15x suggested) · stablecoin loan vs spot collateral (no perp)</li>
+          <li><strong>Full-cycle hold:</strong> hold through next cycle top (expected 2027–2028), no short-term timing</li>
         </ul>
+        <p style="margin-top:8px;font-size:11px;color:var(--text-muted);">⚠️ Percentages above are methodology reference only. Position sizing depends on individual portfolio size, risk tolerance, and available cash. Not investment advice.</p>
       </div>
       <div class="theory-block">
         <h4>Caveats · 风险提示</h4>
@@ -969,15 +1008,8 @@ const INLINE_DATA = {
       "historical": { "cn": "2019/1 Fed 暂停 → BTC 同月见底;2022/10 10Y 见顶 → BTC 一个月后见底",
                       "en": "2019/1 Fed pause → BTC bottomed same month; 2022/10 10Y peaked → BTC bottomed 1 month later" } }
   ],
-  "dca": {
-    "start_date": "2026-04-14", "week": 1, "total_weeks": 20, "weekly_pct_base": 1.5, "weekly_amount_base": 75000,
-    "remaining_allocation_pct": 30, "total_portfolio_usd": 5000000, "deployed_usd": 0, "deployed_pct": 0,
-    "this_week_buy_usd": null, "this_week_buy_price": null,
-    "acceleration_rules": { "cn": "若 BTC 周跌 >10%,买 3%;>20%,买 5%",
-                            "en": "If BTC drops >10% weekly, buy 3%; >20%, buy 5%" }
-  },
   "leverage": { "signals_triggered": 0, "signals_required": 4, "target_leverage": "1.10x – 1.15x",
-    "target_borrow_usd": "$500K – $750K", "max_borrow_rate": "12% APR", "liquidation_buffer": ">85% below entry" },
+    "max_borrow_rate": "12% APR", "liquidation_buffer": ">85% below entry" },
   "events_next_week": [
     { "date": "2026-04-28 ~ 04-29",
       "name":   { "cn": "FOMC 会议 + 鲍威尔发布会", "en": "FOMC Meeting + Powell Press Conference" },
@@ -1115,21 +1147,21 @@ function render(d) {
     </div>
   `).join('');
 
-  // DCA
-  document.getElementById('dca-week').textContent = d.dca.week;
-  document.getElementById('dca-total').textContent = d.dca.total_weeks;
-  document.getElementById('dca-pct').textContent = d.dca.deployed_pct;
-  document.getElementById('dca-fill').style.width = d.dca.deployed_pct + '%';
-  document.getElementById('dca-deployed').textContent = T.dca_deployed(d.dca.deployed_usd);
-  const remainingWeeks = d.dca.total_weeks - d.dca.week + 1;
-  document.getElementById('dca-remaining').textContent = T.dca_remaining(remainingWeeks);
-
-  const tw = document.getElementById('this-week');
-  if (d.dca.this_week_buy_usd) {
-    tw.innerHTML = T.dca_bought(d.dca.this_week_buy_usd, d.dca.this_week_buy_price);
-  } else {
-    tw.innerHTML = T.dca_pending(d.dca);
-  }
+  // DCA Strategy
+  document.getElementById('dca-subtitle').textContent = T.dca_subtitle;
+  const strategyRows = [
+    [T.strategy_base_label, T.strategy_base_value],
+    [T.strategy_accel_label, T.strategy_accel_value],
+    [T.strategy_window_label, T.strategy_window_value],
+    [T.strategy_gate_label, T.strategy_gate_value],
+  ];
+  document.getElementById('strategy-list').innerHTML = strategyRows.map(([k, v]) => `
+    <div class="strategy-row">
+      <span class="k">${k}</span>
+      <span class="v">${v}</span>
+    </div>
+  `).join('');
+  document.getElementById('strategy-note').textContent = T.strategy_note;
 
   // Leverage
   document.getElementById('lev-count').textContent = triggered;
