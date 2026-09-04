@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>BTC 牛市周期建仓策略 — 最终版 2026-09-04</title>
+<style>
+  @page { size: A4; margin: 16mm 14mm 16mm 14mm; }
+  * { box-sizing: border-box; }
+  body { font-family: "WenQuanYi Zen Hei", "Noto Sans CJK SC", "PingFang SC", sans-serif; font-size: 10.5pt; line-height: 1.5; color: #1a1a1a; margin: 0; }
+  h1 { font-size: 20pt; margin: 0 0 4px 0; letter-spacing: 0.5px; }
+  h2 { font-size: 14pt; margin: 22px 0 8px 0; padding-bottom: 4px; border-bottom: 2px solid #1a1a1a; page-break-after: avoid; }
+  h3 { font-size: 11.5pt; margin: 14px 0 6px 0; page-break-after: avoid; }
+  p { margin: 5px 0; }
+  .sub { color: #555; font-size: 9.5pt; margin-bottom: 14px; }
+  table { border-collapse: collapse; width: 100%; margin: 6px 0 10px 0; font-size: 9.2pt; page-break-inside: avoid; }
+  th, td { border: 1px solid #bbb; padding: 4px 6px; vertical-align: top; text-align: left; }
+  th { background: #efefef; font-weight: 600; }
+  td.num, th.num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .mono { font-family: "DejaVu Sans Mono", monospace; font-size: 9pt; }
+  .box { border: 1px solid #999; background: #fafafa; padding: 8px 10px; margin: 8px 0; page-break-inside: avoid; }
+  .warn { border-left: 4px solid #b00; padding-left: 10px; margin: 8px 0; }
+  .ok { color: #1b6e1b; font-weight: 600; } .part { color: #b36b00; font-weight: 600; } .no { color: #b00; font-weight: 600; }
+  ul { margin: 4px 0 6px 18px; padding: 0; } li { margin: 2px 0; }
+  .pb { page-break-before: always; }
+  .small { font-size: 9pt; color: #444; }
+  .kv td:first-child { width: 22%; font-weight: 600; background: #f7f7f7; }
+</style>
+</head>
+<body>
+
+<h1>BTC 牛市周期建仓策略 — 最终版</h1>
+<div class="sub">2026-09-04 ｜ 目标：2026-12-15 前现货满仓"BTC 放大器"资产，不用杠杆，同时保留对 10-11 月"最后一跌"的接货能力。本文件供第二意见审阅，所有数据为 2026-09-03/04 检索值。</div>
+
+<h2>0. 一页摘要</h2>
+<div class="box">
+<p><b>判断</b>：BTC 6 月 $59.3K 大概率是本轮四年周期低点，但距顶 333 天、历史 top→bottom 364-376 天，10-11 月仍有"最后一跌"的可能。五个底部信号 2.5/5，不开杠杆。</p>
+<p><b>组合</b>：BTC 70 枚不动（~78%）。剩余 ~$910K 现金按"四种放大机制分散"部署：HYPE $310K、UNI $290K、MSTR $120K、ARB $80K、CRCL put 接货 $30K、尾部储备 $80K。</p>
+<p><b>方法</b>：等额美元、不等间距（近密远疏）的限价单 + 每档截止日强制市价成交。跌了接便宜货，不跌也必然在 12/15 前满仓。挂单价按筹码密集区/真空区和 EMA 定，全部放在技术位上方 0.3-0.5%。</p>
+<p><b>今天动作</b>：撤掉 OKX 现有 4,000 HYPE 低位挂单，按第 5 节挂 HYPE $140K + UNI $120K。</p>
+</div>
+
+<h2>1. 当前持仓与资金</h2>
+<table>
+<tr><th>资产</th><th>数量</th><th class="num">市值（估）</th><th class="num">占比</th><th>备注</th></tr>
+<tr><td>BTC</td><td>70</td><td class="num">$5,460,000</td><td class="num">79.5%</td><td>DCA 已完成（Week 21/20），不再常规加仓</td></tr>
+<tr><td>HYPE</td><td>4,000</td><td class="num">$330,000</td><td class="num">4.8%</td><td>成本 $55-60；原目标 8,000 枚</td></tr>
+<tr><td>CRCL</td><td>1,200 + short 3 put</td><td class="num">$120,000</td><td class="num">1.7%</td><td>成本 $60s；put 接货后 1,500 股</td></tr>
+<tr><td>SNDK short put</td><td>2 张，11 月下旬到期</td><td class="num">—</td><td class="num">—</td><td>已收权利金 $26,600，占用 Futu 保证金</td></tr>
+<tr><td>USDT / USD</td><td>OKX $260K + 几万 USDC；套利账户 $500K；Futu $150K</td><td class="num">$950,000</td><td class="num">13.8%</td><td>套利账户 10 月、11 月各取 $250K</td></tr>
+<tr><th>合计</th><th></th><th class="num">~$6,860,000</th><th></th><th></th></tr>
+</table>
+
+<h2>2. 市场快照（2026-09-04）</h2>
+<table>
+<tr><th style="width:12%">项目</th><th>数据</th></tr>
+<tr><td>BTC</td><td>$78-80K；ATH $126,210（2025-10-06）→ -37%；距顶 333 天；6 月低点 $59.3K（21 个月新低）；8 月 $60K→$81.4K（+25%）；50 周均线 ~$80K 压制；ETF 8/17-27 九连流入 $3.04B 后转震荡</td></tr>
+<tr><td>HYPE</td><td>$82-83；swing high $86.55（8/26 ATH）；8 月开盘 $55.50，7 月低点 $52.30，6 月前高 $76.70；EMA20 $75.08 / EMA50 $67.76 / EMA100 $62.45 / EMA200 $53.89；每月 6 日解锁 9.92M 给核心贡献者至 2027-10（历史 claim 率 &lt;2%）；回购 $53-83M/月 ≈ 7% mcap/yr；年化 revenue $0.7-1B；全球 perp OI 份额 9%；Trump 8/20 称 CFTC 在做美国合规路径</td></tr>
+<tr><td>UNI</td><td>$6.2；mcap ~$3.9B（circ 622M）；8/17 $3.29 起涨，6-7 月箱体 $2.30-4.00；R2 $6.95 / $8.41；突破回踩区 $4.74，EMA20 $4.62，支撑 $4.11；RSI 74 超买；UNIfication 已烧 100M UNI，fee switch 已开（协议费进 TokenJar，烧 UNI 领取），年化协议收入 $26-58M，v4 七链 + Robinhood Chain v2/v3 协议费提案再加 ~$27M/yr；团队/投资人 vesting 2024-09 结束；Uniswap 占 Robinhood Chain 股票代币流动性 99%，链上 DEX 日成交 9/1 $1.58B；ATH $44.97（2021-05）</td></tr>
+<tr><td>MSTR</td><td>$144（9/3 +17.5%，日内 $124.26-145.12）；845,050 BTC；BTC NAV ~$66B；basic mNAV ~0.87，enterprise ~1.1；USD 储备 $6.7B；STRC 优先股股息 12%/yr；8 月卖股 $334M；AGP 目标价 $217</td></tr>
+<tr><td>CRCL</td><td>$97-101（mcap $25.7B）；8 月 +44%；Q2 revenue $701M（miss $717M），USDC $73.3B（+19% YoY，市场缩 40% 时仍增长）；Arc 主网 9/16；ARC 预售 $222M @ $3B 估值；CLARITY Act 参议院 9/15 投票</td></tr>
+<tr><td>ARB</td><td>$0.142（mcap ~$950M）；一周 +30%；Robinhood Chain 日收入 $1.92M；10% 净收入回 Arbitrum（8% DAO 金库 + 2% Guild），无自动回购；9/16 解锁 92.6M；Robinhood gas 补贴 9/29 到期</td></tr>
+<tr><td>HOOD</td><td>$123（mcap $112B，P/E 47）；Q2 revenue +32% 但 crypto revenue -38%；链业务未披露为重要贡献 → 剔除</td></tr>
+<tr><td>宏观</td><td>Fed 3.50-3.75%，7 月 9-3 保持（3 票要加息）；9/11 CPI；9/16 FOMC；10Y 4.76%；WTI $90.7；美伊再打；Waller 9/3 倾向按兵不动</td></tr>
+</table>
+
+<h2>3. 五个底部信号：2.5 / 5</h2>
+<table>
+<tr><th>#</th><th>信号（权重）</th><th>状态</th><th>说明</th></tr>
+<tr><td>1</td><td>Higher Low（25%）</td><td class="part">◐ PARTIAL</td><td>6 月 $59.3K 跌破 2 月 $60,074，旧结构失效；新 A = $59.3K，反弹后尚未回踩形成 B</td></tr>
+<tr><td>2</td><td>Weekly MACD 零轴下金叉（20%）</td><td class="ok">✅ TRIGGERED</td><td>21 个月低点起单月 +25%，零轴下金叉基本确定</td></tr>
+<tr><td>3</td><td>LTH 净积累（20%）</td><td class="part">◐ PARTIAL</td><td>7 月转正 5-10 万 BTC；8 月 1y+ 持币 -356K，老钱在反弹中派发</td></tr>
+<tr><td>4</td><td>ETF 两周净流入（15%）</td><td class="ok">✅ 弱</td><td>九连流入 $3.04B 后 9 月转震荡，WTD +$81M</td></tr>
+<tr><td>5</td><td>Macro 拐点（20%）</td><td class="no">❌ PENDING</td><td>Fed 偏鹰、10Y 无下行趋势、油价 $90+ 抬通胀</td></tr>
+</table>
+<p>结论：底部"已出"与"10-11 月最后一跌"两种情景都用建仓节奏覆盖，不靠猜。OKX 借 USDT 杠杆需 4/5 才开，现在不开；杠杆需求由 MSTR 承担。</p>
+
+<h2 class="pb">4. 逻辑推演</h2>
+<h3>4.1 四种"BTC 放大机制"，失效条件互相独立，所以都配</h3>
+<table>
+<tr><th style="width:16%">机制</th><th style="width:12%">标的</th><th>放大原理</th><th>失效条件</th></tr>
+<tr><td>A 资产负债表杠杆</td><td>MSTR</td><td>持币 + 债务/优先股 ≈ 1.1-1.2x BTC 敞口；牛市 mNAV 从 0.87 回到 1.5-2.5x 是第二重放大</td><td>BTC 横盘或再跌 → mNAV 持续 &lt;1 → 卖股付 12% 股息形成稀释螺旋</td></tr>
+<tr><td>B 经营杠杆</td><td>HYPE、UNI</td><td>成交量 = 价格 × 波动率 × 参与者，牛市三者同升 → 手续费超线性增长 → 回购/销毁</td><td>监管封堵（HYPE）；Robinhood 自建 DEX 或谈判降低协议费（UNI）</td></tr>
+<tr><td>C 浮存反身性</td><td>CRCL</td><td>牛市 → 稳定币需求 ↑（2021 年 USDC $4B→$42B）→ reserve income 随规模涨，抵消利率下降</td><td>快速降息 + USDC 份额被 USDT/银行稳定币蚕食</td></tr>
+<tr><td>D 叙事 beta</td><td>ARB</td><td>价值捕获弱但市值 $950M，资金轮动时弹性大</td><td>补贴到期活跃度回落；DAO 迟迟不投票回购</td></tr>
+</table>
+
+<h3>4.2 标的排序（跑赢 BTC 的确定性 × 赔率）</h3>
+<table>
+<tr><th>#</th><th>标的</th><th>机制</th><th>跑赢概率</th><th>2 年赔率</th><th>核心逻辑</th><th>核心风险</th></tr>
+<tr><td>1</td><td>HYPE</td><td>B</td><td>高</td><td>3-5x</td><td>真实现金流 + 7%/yr 回购；perp 成交量牛市超线性；CFTC 美国路径 + 潜在 ETF 是估值重定价催化</td><td>在 ATH 无安全边际；每月 ~$800M 名义解锁；RWA perps 吞噬 revenue</td></tr>
+<tr><td>2</td><td>UNI</td><td>B</td><td>中高</td><td>3-5x</td><td>"股票代币化"叙事的直接受益者：Robinhood Chain 99% 股票代币流动性在 Uniswap；协议费直接烧 UNI；无解锁；上轮 mcap $22B，现在 $3.9B 且有真实收入</td><td>已从 $3 翻倍、RSI 74；Robinhood 是链主，平台风险；v4 协议费提案未落地；链上成交含 launchpad/meme 泡沫</td></tr>
+<tr><td>3</td><td>MSTR</td><td>A</td><td>高（条件牛市）</td><td>2.5-4x</td><td>mNAV 0.87 折价买 BTC + 自带杠杆；$6.7B USD 储备缓解股息压力；BTC $100K+ 时 mNAV 历史回 1.5x+</td><td>每年 ~$1.7B 股息硬支出；mNAV &lt;1 时增发即稀释；已反弹 +55%</td></tr>
+<tr><td>4</td><td>CRCL</td><td>C</td><td>中高</td><td>2-3x</td><td>浮存增长与币价脱钩已被 Q2 验证；Arc/ARC 隐藏资产；CLARITY；Fed 不降息反而利好 reserve yield</td><td>Q2 miss；Coinbase 分成一半；2027 降息周期压利润；估值 ~35x 前瞻</td></tr>
+<tr><td>5</td><td>ARB</td><td>D</td><td>中低</td><td>3-6x</td><td>Robinhood Chain 唯一底层代币，日收入超 Solana，从 $2+ 跌到 $0.10 被遗弃，任何回购提案都是重估触发器</td><td>8% 进 DAO 金库不进代币；9/16 解锁；补贴到期</td></tr>
+<tr><td>—</td><td>HOOD</td><td>—</td><td>中低</td><td>1.5-2x</td><td>链业务 &lt;10% revenue，beta 被稀释</td><td>剔除</td></tr>
+<tr><td>—</td><td>Unit (HyperUnit)</td><td>—</td><td>不可买</td><td>—</td><td>无代币，仅 $UNIT ticker</td><td>可选桥 1-2 BTC 到 HyperCore 农空投，不计入分配</td></tr>
+</table>
+<p><b>UNI 排在 MSTR 前的理由</b>：机制 B 在牛市早期弹性最大（成交量对价格的二阶导为正），mNAV 回归要等市场先相信"增发是增值的"；UNI 市值基数是 MSTR 的 1/15；UNI 无解锁、无股息硬支出。但 UNI 是平台风险、MSTR 是财务风险，两者独立，所以都配。</p>
+
+<h3>4.3 挂单价怎么定：筹码密集区 vs 真空区</h3>
+<ul>
+<li><b>HYPE</b>：4-7 月在 $52-77 横了 4 个月（密集区）；$77-86 只交易 2 周（真空区）。回调在真空区不会停，会直接掉到密集区顶部 $75-77 才有承接。所以 $79-83 只放轻量，重量放 $75.4 和 $72.6。</li>
+<li><b>UNI</b>：6-7 月 $2.30-4.00 横 2 个月（密集区）；$4.7-6.2 只走 2 周（真空区），RSI 74。第一站是趋势线突破回踩区 $4.74-4.62，重仓；$5.6 只是前日收盘位，轻仓。</li>
+<li><b>价格取小数</b>：所有限价放在整数/技术位上方 0.3-0.5%，赶在堆在整数位的买单前成交。</li>
+<li><b>等额美元 + 不等间距</b>：每档 $15-30K，间距近密远疏。跌得浅也有成交，跌得深自动买更多枚数。</li>
+<li><b>截止日强制成交</b>：到期未成交则当天市价买该档全额。截止日价格高于限价 50% 以上时只买一半，余下并入下一档；最后一档无条件。这保证任何情景下 12/15 前满仓。</li>
+<li><b>时间加权</b>：深档截止日放 10/31 和 11/30，对准距顶 364-376 天（10/5-10/17）加确认期的历史底部窗口。</li>
+</ul>
+
+<h2 class="pb">5. 第一期挂单 — 今天执行（OKX $260K）</h2>
+<p>先撤掉现有 4,000 HYPE 低位挂单。几万 USDC 留作 S 档补充，不另挂。</p>
+<h3>5.1 HYPE — $140K（OKX HYPE/USDT，现价 ~$82.5）</h3>
+<table>
+<tr><th>档</th><th class="num">限价</th><th class="num">相对现价</th><th class="num">金额</th><th class="num">枚数</th><th>截止日</th><th>依据</th></tr>
+<tr><td>S</td><td class="num">市价，上限 $88.80</td><td class="num">0</td><td class="num">$30,000</td><td class="num">~360</td><td>9/8-9/12</td><td>9/6 解锁消化后建底仓；防 CFTC/CLARITY 消息直接上 $95</td></tr>
+<tr><td>L1</td><td class="num">$79.30</td><td class="num">-4%</td><td class="num">$25,000</td><td class="num">315</td><td>9/30</td><td>即时支撑 $78.98 上方</td></tr>
+<tr><td>L2</td><td class="num">$75.40</td><td class="num">-9%</td><td class="num">$25,000</td><td class="num">332</td><td>9/30</td><td>EMA20 $75.08 + 密集区顶部</td></tr>
+<tr><td>L3</td><td class="num">$72.60</td><td class="num">-12%</td><td class="num">$20,000</td><td class="num">275</td><td>10/31</td><td>$73.03 下方；6 月前高 $76.7 回踩失败位</td></tr>
+<tr><td>L4</td><td class="num">$68.30</td><td class="num">-17%</td><td class="num">$20,000</td><td class="num">293</td><td>10/31</td><td>EMA50 $67.76 / $68.85 结构支撑</td></tr>
+<tr><td>L5</td><td class="num">$62.90</td><td class="num">-24%</td><td class="num">$20,000</td><td class="num">318</td><td>11/30</td><td>EMA100 $62.45</td></tr>
+</table>
+<p class="small">全成交：1,893 枚，均价 $73.9。仅 S+L1+L2：1,007 枚，均价 $79.4。</p>
+
+<h3>5.2 UNI — $120K（OKX UNI/USDT，现价 ~$6.20）</h3>
+<table>
+<tr><th>档</th><th class="num">限价</th><th class="num">相对现价</th><th class="num">金额</th><th class="num">枚数</th><th>截止日</th><th>依据</th></tr>
+<tr><td>S</td><td class="num">市价，上限 $6.60</td><td class="num">0</td><td class="num">$15,000</td><td class="num">~2,400</td><td>9/8-9/12</td><td>小底仓；RSI 74 不追</td></tr>
+<tr><td>L1</td><td class="num">$5.63</td><td class="num">-9%</td><td class="num">$20,000</td><td class="num">3,552</td><td>9/30</td><td>9/1 收盘位，第一回踩</td></tr>
+<tr><td>L2</td><td class="num">$5.18</td><td class="num">-16%</td><td class="num">$25,000</td><td class="num">4,826</td><td>10/31</td><td>38.2% 回撤（$3.29→$6.35）</td></tr>
+<tr><td>L3</td><td class="num">$4.79</td><td class="num">-23%</td><td class="num">$25,000</td><td class="num">5,219</td><td>10/31</td><td>50% 回撤 + 趋势线突破回踩 $4.74</td></tr>
+<tr><td>L4</td><td class="num">$4.46</td><td class="num">-28%</td><td class="num">$20,000</td><td class="num">4,484</td><td>11/30</td><td>61.8% 回撤，EMA20 $4.62 下方</td></tr>
+<tr><td>L5</td><td class="num">$4.14</td><td class="num">-33%</td><td class="num">$15,000</td><td class="num">3,623</td><td>12/15</td><td>$4.11 支撑上方，箱体顶部</td></tr>
+</table>
+<p class="small">全成交：24,104 枚，均价 $4.98。仅 S+L1：5,952 枚，均价 $5.88。</p>
+
+<h3>5.3 第一期成交路径预估</h3>
+<table>
+<tr><th>情景</th><th>9/30</th><th>10/31</th></tr>
+<tr><td>不回调（HYPE &gt; $80，UNI &gt; $5.7）</td><td>S 已买；HYPE L1/L2、UNI L1 到期市价买入 → 已部署 $115K</td><td>HYPE L3/L4、UNI L2/L3 到期市价 → $205K</td></tr>
+<tr><td>浅回调（HYPE $74，UNI $5.1）</td><td>HYPE S+L1+L2、UNI S+L1+L2 成交 → $140K</td><td>余档到期市价 → $205K</td></tr>
+<tr><td>深回调（HYPE $63，UNI $4.2）</td><td>全部成交，$260K 用完，二期资金接力</td><td>—</td></tr>
+</table>
+
+<h2 class="pb">6. 第二、三期挂单（到账后设定）</h2>
+<p>原则：到账当天按<b>当时价格</b>重设浅档，深档保持绝对价不动；若价格偏离下表 15% 以上则整体平移。Token（HYPE/UNI）优先于 ARB。</p>
+<h3>6.1 第二期：10 月初 +$250K</h3>
+<table>
+<tr><th>标的</th><th>档</th><th class="num">限价</th><th class="num">金额</th><th>截止日</th><th>依据</th></tr>
+<tr><td>HYPE</td><td>L6</td><td class="num">$58.40</td><td class="num">$30,000</td><td>11/30</td><td>8 月起点 $55.5 上方 / 现有成本区</td></tr>
+<tr><td>HYPE</td><td>L7</td><td class="num">$54.20</td><td class="num">$30,000</td><td>12/15</td><td>EMA200 $53.89 上方</td></tr>
+<tr><td>HYPE</td><td>补</td><td class="num">当时价 -6%</td><td class="num">$25,000</td><td>10/31</td><td>若一期 L1-L4 已全成交则改为 -10%</td></tr>
+<tr><td>UNI</td><td>L6</td><td class="num">$3.86</td><td class="num">$30,000</td><td>11/30</td><td>箱体上沿 $4.0 下方，8 月突破前平台</td></tr>
+<tr><td>UNI</td><td>L7</td><td class="num">$3.42</td><td class="num">$30,000</td><td>12/15</td><td>8/17 起涨位 $3.29 上方</td></tr>
+<tr><td>UNI</td><td>补</td><td class="num">当时价 -8%</td><td class="num">$25,000</td><td>10/31</td><td></td></tr>
+<tr><td>ARB</td><td>A1</td><td class="num">$0.1090</td><td class="num">$30,000</td><td>10/10</td><td>8/31 起涨前平台 $0.105 上方；等 9/29 补贴到期后再挂</td></tr>
+<tr><td>ARB</td><td>A2</td><td class="num">$0.0920</td><td class="num">$25,000</td><td>11/15</td><td>8 月箱体中枢</td></tr>
+<tr><td>ARB</td><td>A3</td><td class="num">$0.0780</td><td class="num">$25,000</td><td>12/15</td><td>8 月箱体底；截止日价格 &gt; $0.20 只买一半</td></tr>
+</table>
+<h3>6.2 第三期：11 月初 +$250K</h3>
+<table>
+<tr><th>标的</th><th>档</th><th class="num">限价</th><th class="num">金额</th><th>截止日</th></tr>
+<tr><td>HYPE</td><td>L8 / L9</td><td class="num">当时价 -5% / -15%</td><td class="num">$42,500 × 2</td><td>11/30 / 12/15</td></tr>
+<tr><td>UNI</td><td>L8 / L9</td><td class="num">当时价 -6% / -18%</td><td class="num">$42,500 × 2</td><td>11/30 / 12/15</td></tr>
+<tr><td>尾部储备</td><td>—</td><td class="num">不挂单</td><td class="num">$80,000</td><td>BTC 日收 &lt; $65K：50% BTC + 50% HYPE；&lt; $60K：剩余全 BTC；12/1 未触发：50% HYPE + 50% UNI</td></tr>
+</table>
+
+<h2>7. Futu：SNDK put、MSTR、CRCL</h2>
+<div class="box">
+<p><b>决定</b>：SNDK 2 张 put 持有到 11 月下旬到期。理由：剩余可收权利金 ~$18K；若 SNDK 跌破行权价，愿意接货做短期抄底；到期时间恰与 BTC "最后一跌"窗口重合，届时用全部权利金折价买 MSTR。BTC + CRCL 敞口已足够，MSTR 不急。</p>
+<p><b>MSTR 挂单（11 月下旬，put 到期当天按当时价）</b>：4 档各 $30,000，限价 = 当时价 × 1.00 / 0.90 / 0.80 / 0.70，截止日均为 12/15。若当时 basic mNAV &gt; 1.3，降为 3 档共 $90K，余款转 HYPE。</p>
+<p><b>CRCL</b>：现有 3 张 put 到期接货至 1,500 股。之后每月卖 1-2 张，行权价现价 -12% 到 -15%，30-45 天到期，权利金滚入下一轮。&gt; $130 停卖，上限 1,800 股。</p>
+</div>
+
+<h2>8. 资金总表</h2>
+<table>
+<tr><th>期</th><th>时间</th><th class="num">资金</th><th>投向</th></tr>
+<tr><td>一</td><td>今天</td><td class="num">$260,000</td><td>HYPE $140K + UNI $120K</td></tr>
+<tr><td>二</td><td>10 月初</td><td class="num">$250,000</td><td>HYPE $85K + UNI $85K + ARB $80K</td></tr>
+<tr><td>三</td><td>11 月初</td><td class="num">$250,000</td><td>HYPE $85K + UNI $85K + 储备 $80K</td></tr>
+<tr><td>Futu</td><td>11 月下旬</td><td class="num">$150,000</td><td>MSTR $120K + CRCL put 接货 $30K</td></tr>
+<tr><th>合计</th><th></th><th class="num">$910,000</th><th>HYPE $310K ｜ UNI $290K ｜ MSTR $120K ｜ ARB $80K ｜ CRCL $30K ｜ 储备 $80K</th></tr>
+</table>
+<table>
+<tr><th>建成后</th><th class="num">占总资产</th><th>目标持仓</th></tr>
+<tr><td>BTC</td><td class="num">~76%</td><td>70 枚</td></tr>
+<tr><td>HYPE</td><td class="num">~9%</td><td>7,000-8,800 枚（视成交价）</td></tr>
+<tr><td>UNI</td><td class="num">~4%</td><td>40,000-65,000 枚</td></tr>
+<tr><td>MSTR</td><td class="num">~2%</td><td>800-1,100 股</td></tr>
+<tr><td>CRCL</td><td class="num">~2%</td><td>1,500-1,800 股</td></tr>
+<tr><td>ARB</td><td class="num">~1%</td><td>0.6-1.0M 枚</td></tr>
+</table>
+
+<h2 class="pb">9. 失效条件（保护不在错的判断上满仓）</h2>
+<table>
+<tr><th>条件</th><th>动作</th></tr>
+<tr><td>BTC <b>周线收盘</b> &lt; $59,000（6 月低点破位）</td><td>暂停所有"截止日市价买入"4 周，只留限价单；4 周后重估周期定位</td></tr>
+<tr><td>Hyperliquid &gt; $100M 安全事件，或美国监管明确封堵</td><td>HYPE 后续档冻结，已有仓位不动</td></tr>
+<tr><td>Robinhood 宣布自建 DEX / 停止 Uniswap 默认路由</td><td>UNI 后续档冻结</td></tr>
+<tr><td>MSTR basic mNAV &lt; 0.65 且宣布以普通股付优先股股息</td><td>MSTR 后续档冻结</td></tr>
+<tr><td>Circle 失去 Coinbase 分销协议或 USDC 脱锚</td><td>CRCL 停止卖 put</td></tr>
+</table>
+
+<h2>10. 减仓框架（预告，2027 年细化）</h2>
+<ul>
+<li>周期顶部：底部（2026 Q4）+ 1,065 天 ≈ 2029 Q3-Q4；下次减半 ~2028 Q1-Q2 + 537 天 ≈ 2029 Q3-Q4。两模型一致。</li>
+<li>放大器先减、BTC 后减：HYPE/UNI/ARB 在 3x 减 25%、5x 再减 25%；MSTR mNAV &gt; 2.0 减半；CRCL &gt; 60x 前瞻 P/E 减半。</li>
+<li>BTC 本体 2028 Q4 前不动。</li>
+</ul>
+
+<h2>11. 未来 4 周日历</h2>
+<table>
+<tr><th>日期</th><th>事件</th><th>影响</th></tr>
+<tr><td>9/6</td><td>HYPE 解锁 9.92M</td><td>历史影响小；S 档放在 9/8 后</td></tr>
+<tr><td>9/11</td><td>US CPI（8 月）</td><td>油价 $90 → 通胀上行风险</td></tr>
+<tr><td>9/15</td><td>参议院 CLARITY Act 投票</td><td>利好 CRCL / HYPE / UNI</td></tr>
+<tr><td>9/16</td><td>FOMC + SEP；Circle Arc 主网；ARB 解锁 92.6M</td><td>三重事件日</td></tr>
+<tr><td>9/29</td><td>Robinhood Chain gas 补贴到期</td><td>ARB / UNI 观察窗口，ARB 此后再挂</td></tr>
+<tr><td>10/6</td><td>距顶 365 天</td><td>历史底部窗口开启</td></tr>
+</table>
+
+<h2>12. 请第二意见重点审视的问题</h2>
+<ol>
+<li>"四种放大机制分散"是否成立？MSTR 与 BTC 本体的相关性 &gt;0.9，把它算作独立机制是否高估了分散效果？</li>
+<li>UNI 的价值捕获：Robinhood Chain 上的 v2/v3 协议费提案尚未落地，当前 $26-58M 年化收入对应 $3.9B 市值是 70-150x。在协议费落地前给 $290K 是否过重？</li>
+<li>HYPE 每月 9.92M 解锁（~$800M 名义）vs 回购 $53-83M/月：若 claim 率随价格上升到 10-20%，净供给压力是否会压制 2027 年前的涨幅？</li>
+<li>截止日强制市价买入规则在"不回调直接上涨"情景下会以 +20-30% 均价买入。有没有比"买一半、余下并入下一档"更好的追高约束？</li>
+<li>尾部储备只有 $80K（8% 现金），若 BTC 真回踩 $60K，是否应该更大？代价是其他情景下的闲置。</li>
+<li>Fed 有加息派、油价 $90+、美伊冲突：宏观信号是 5 个中唯一 ❌ 的。这是否足以让整个"12/15 前满仓"时间表推迟到 2027 Q1？</li>
+</ol>
+
+<p class="small" style="margin-top:20px">数据来源（2026-09-03/04 检索）：Fortune / Yahoo Finance（BTC）、CoinGecko / CryptoRank / CoinDCX（HYPE）、FXStreet / Coinpedia / Cryptobriefing / DL News（UNI）、Benzinga / SEC 8-K / CoinDesk（MSTR）、Circle 官网 Q2 新闻稿 / CNBC（CRCL）、CoinMarketCap / Techflow（ARB）、Federal Reserve / Schwab / TradingEconomics（宏观）、Glassnode / VanEck（LTH）、Farside / HedgeCo（ETF）。</p>
+
+</body>
+</html>
